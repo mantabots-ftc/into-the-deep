@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -25,7 +26,11 @@ public class MechanumDrive extends OpMode {
     double imuTarget;
     double replace;
     double difference;
-    private DistanceSensor distanceSensor;
+    private DistanceSensor distanceSensor1;
+    private DistanceSensor distanceSensor2;
+    private ColorSensor colorSensor;
+    double distance1;
+    double distance2;
     @Override
     public void init (){
        frontLeft = hardwareMap.get(DcMotor.class,"frontLeft");
@@ -35,7 +40,8 @@ public class MechanumDrive extends OpMode {
        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-       distanceSensor = hardwareMap.get(DistanceSensor.class,"sensor_color_distance");
+       distanceSensor1 = hardwareMap.get(DistanceSensor.class,"sensor_color_distance");
+       distanceSensor2 = hardwareMap.get(DistanceSensor.class,"sensor_color_distance2");
        double multiplier;
 
 
@@ -57,6 +63,14 @@ public class MechanumDrive extends OpMode {
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
         double rotation = gamepad1.right_stick_x;
+        distance1 = distanceSensor1.getDistance(DistanceUnit.CM) ;
+        distance2 = distanceSensor2.getDistance(DistanceUnit.CM) ;
+        telemetry.addData("distance 1:",distance1);
+        telemetry.addData("distance 2:",distance2);
+        telemetry.addData("ImuTarget", imuTarget);
+        telemetry.addData("botHeading", botHeading);
+        telemetry.addData("aIsPressed",aIsPressed);
+        telemetry.addData("difference",difference);
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rotation), 1);
         double multiplier = 0.45;
         botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -66,6 +80,7 @@ public class MechanumDrive extends OpMode {
         if (botHeading < 0){
             botHeading += Math.PI*2;
         }
+
 
 
         if (gamepad1.left_bumper) {
@@ -84,6 +99,7 @@ public class MechanumDrive extends OpMode {
 
 
         }
+
 
 
         if (aIsPressed){
