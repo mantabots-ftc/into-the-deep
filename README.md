@@ -462,7 +462,7 @@ This is a bug fix only release to address the following four issues.
   an officially supported gamepad was connected, then opening the Advanced Gamepad Features or
   Gamepad Type Overrides screens would cause the gamepad to be rebound by the custom USB driver even
   though advanced gamepad features was disabled.
-* Protects against (unlikely) null pointer exception in Vuforia Localizer.
+* Protects against (unlikely) null pointer exception in Vuforia org.firstinspires.ftc.teamcode.MecanumTeleOp.Localizer.
 * Harden OnBotJava and Blocks saves to protect against save issues when disconnecting from Program and Manage
 * Fixes issue where the RC app would hang if a REV Hub I2C write failed because the previous I2C
   operation was still in progress. This hang most commonly occurred during REV 2M Distance Sensor initialization
