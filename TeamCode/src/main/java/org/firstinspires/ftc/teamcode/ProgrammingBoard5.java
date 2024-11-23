@@ -69,6 +69,7 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.messages.TankCommandMessage;
+import org.firstinspires.ftc.teamcode.messages.TankLocalizerInputsMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -587,7 +588,7 @@ public class ProgrammingBoard5 {
 
                     List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                     List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                    if (md.localizer instanceof MecanumDrive.DriveliLocalizer) {
+                    if (md.localizer instanceof MecanumDrive.DriveLocalizer) {
                         MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) md.localizer;
                         leftEncs.add(dl.leftFront);
                         leftEncs.add(dl.leftBack);
