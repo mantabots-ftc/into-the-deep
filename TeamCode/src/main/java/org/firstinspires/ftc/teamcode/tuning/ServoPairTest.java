@@ -46,8 +46,15 @@ public class ServoPairTest extends LinearOpMode {
         ConfServo masterConf = Configuration.s_Current.getServoForTuning(nameMaster);
         ConfServo slaveConf = Configuration.s_Current.getServoForTuning(nameSlave);
 
+        if(masterConf == null) { telemetry.addLine("Master name " + nameMaster + " not found in configuration"); }
+        if(slaveConf == null) { telemetry.addLine("Slave name " + nameSlave + " not found in configuration"); }
+
         Map.Entry<String, Boolean> hwMaster = masterConf.getHw(0);
         Map.Entry<String, Boolean> hwSlave = slaveConf.getHw(0);
+
+        if(hwMaster == null) { telemetry.addLine("Master name " + nameMaster + " not found in hwmap"); }
+        if(hwMaster == null) { telemetry.addLine("Slave name " + nameSlave + " not found in hwmap"); }
+
 
         telemetry.addLine(hwMaster.getKey());
         telemetry.addLine(hwSlave.getKey());

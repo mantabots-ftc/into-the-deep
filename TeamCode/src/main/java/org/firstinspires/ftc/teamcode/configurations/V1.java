@@ -56,19 +56,33 @@ public class V1 extends Configuration {
         mServos.get("intake-elbow-pitch").addPosition("look", 0.70);
         mServos.get("intake-elbow-pitch").addPosition("overSub", 0.73);
 
-        mServos.get("intake-wrist-roll").addPosition("center", 0.405);
-        mServos.get("intake-wrist-roll").addPosition("max", 0.82);
-        mServos.get("intake-wrist-roll").addPosition("min", 0.27);
+        mServos.get("intake-wrist-roll").addPosition("-2", 0.27);
+        mServos.get("intake-wrist-roll").addPosition("-1", 0.335);
+        mServos.get("intake-wrist-roll").addPosition("0", 0.405);
+        mServos.get("intake-wrist-roll").addPosition("1", 0.47);
+        mServos.get("intake-wrist-roll").addPosition("2", 0.54);
+        mServos.get("intake-wrist-roll").addPosition("3", 0.605);
+        mServos.get("intake-wrist-roll").addPosition("4", 0.675);
+        mServos.get("intake-wrist-roll").addPosition("5", 0.74);
+        mServos.get("intake-wrist-roll").addPosition("6", 0.82);
 
         mServos.get("intake-claw").addPosition("closed", 1.0);
         mServos.get("intake-claw").addPosition("microrelease", 0.98);
         mServos.get("intake-claw").addPosition("open", 0.62);
 
-        mServos.get("outtake-wrist-roll").addPosition("center", 0.13);
+        mServos.get("outtake-wrist-roll").addPosition("-2", 0.84);
+        mServos.get("outtake-wrist-roll").addPosition("-1", 0.775);
+        mServos.get("outtake-wrist-roll").addPosition("0", 0.7);
+        mServos.get("outtake-wrist-roll").addPosition("1", 0.635);
+        mServos.get("outtake-wrist-roll").addPosition("2", 0.56);
+        mServos.get("outtake-wrist-roll").addPosition("3", 0.495);
+        mServos.get("outtake-wrist-roll").addPosition("4", 0.42);
+        mServos.get("outtake-wrist-roll").addPosition("5", 0.355);
+        mServos.get("outtake-wrist-roll").addPosition("6", 0.28);
 
-        mServos.get("outtake-claw").addPosition("closed", 0.3);
-        mServos.get("outtake-claw").addPosition("microrelease", 0.28);
-        mServos.get("outtake-claw").addPosition("open", 0.1);
+        mServos.get("outtake-claw").addPosition("closed", 0.64);
+        mServos.get("outtake-claw").addPosition("microrelease", 0.57);
+        mServos.get("outtake-claw").addPosition("open", 0.26);
 
         mServos.get("outtake-elbow-pitch").addPosition("vertical", 0.015);
         mServos.get("outtake-elbow-pitch").addPosition("outside", 0.06);
