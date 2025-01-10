@@ -176,7 +176,9 @@ public class Collecting {
         else { wasDPadRightPressed = false; }
 
         intakeWrist.turn(gamepad.left_stick_x);
+        logger.addLine(String.format("==> IN WRS : " + intakeWrist.getServo()));
         outtakeWrist.turn(gamepad.right_stick_x);
+        logger.addLine(String.format("==> OUT WRS : " + outtakeWrist.getServo()));
 
     }
 }

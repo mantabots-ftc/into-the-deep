@@ -43,6 +43,7 @@ public class IntakeWrist {
     Telemetry             mLogger;
 
     boolean               mReady;
+
     Position              mPosition;
     double                mDeltaPosition = 0;
     ServoComponent        mServo;
@@ -91,6 +92,11 @@ public class IntakeWrist {
         else        { logger.addLine("==>  IN WRS : KO : " + status); }
 
         // Initialize position
+        if( mPositions.containsKey(Position.MIN) &&
+            mPositions.containsKey(Position.MAX) &&
+            mReady) {
+            mServo.scaleRange(mPositions.get(Position.MIN),mPositions.get(Position.MAX));
+        }
         this.setPosition(Position.CENTER);
     }
 
@@ -105,16 +111,10 @@ public class IntakeWrist {
 
     public void turn(double increment)
     {
-        if( mPositions.containsKey(Position.CENTER) &&
-                mPositions.containsKey(Position.MIN) &&
-                mPositions.containsKey(Position.MAX) &&
-                mReady) {
+        if( mPositions.containsKey(Position.CENTER) && mReady) {
 
             mDeltaPosition += increment * sIncrementRatio;
             double newPosition = mPositions.get(Position.CENTER) + mDeltaPosition;
-
-            newPosition = max(newPosition, mPositions.get(Position.MIN));
-            newPosition = min(newPosition, mPositions.get(Position.MAX));
 
             mLogger.addLine("" + newPosition);
             mLogger.addLine("" + mDeltaPosition);

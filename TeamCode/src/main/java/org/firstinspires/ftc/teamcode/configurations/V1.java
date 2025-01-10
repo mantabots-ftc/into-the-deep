@@ -14,8 +14,7 @@ public class V1 extends Configuration {
 
     protected void initialize(){
 
-        /* Moving configuration :
-           -> Positive power makes wheel go forward */
+        /* Moving configuration : Positive power makes wheel go forward */
         mMotors.put("front-left-wheel",new ConfMotor("frontLeft",false));      // CH Motor 0
         mMotors.put("back-left-wheel",new ConfMotor("backLeft",false));        // CH Motor 1
         mMotors.put("front-right-wheel",new ConfMotor("frontRight",true));     // CH Motor 2
@@ -24,12 +23,7 @@ public class V1 extends Configuration {
         mImus.put("built-in", new ConfImu("imu", RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         mImus.put("otos", new ConfImu("sensor_otos"));                                     // EH I2C 3
 
-        /* Intake configuration :
-           -> Positive power makes slides extend
-           ---> Increasing position makes arm go up
-           -> Increasing position makes elbow go up
-           -> Increasing position makes wrist go TBD
-           -> Increasing position makes claw close */
+        /* Intake configuration */
         mMotors.put("intake-slides",new ConfMotor("intakeSlides",true));                     // EH Motor 2
         mServos.put("intake-arm-pitch", new ConfServo(
                  "intakeArmPitchLeft", false,                                                  // CH Servo 5
@@ -39,6 +33,7 @@ public class V1 extends Configuration {
         mServos.put("intake-wrist-roll", new ConfServo("intakeWristRoll", false));           // CH Servo 4
         mServos.put("intake-claw", new ConfServo("intakeClaw", false));                      // EH Servo 2
 
+        /* Outtake configuration */
         mMotors.put("outtake-slides",new ConfMotor(
                 "outtakeSlidesLeft",false,                                                     // EH Motor 0
                 "outtakeSlidesRight",true                                                                         // EH Motor 1

@@ -25,17 +25,20 @@ public class OuttakeClaw {
 
     public enum Position {
         OPEN,
+        MICRORELEASED,
         CLOSED
     };
 
     private static final Map<String, Position> sConfToPosition = Map.of(
             "open",  Position.OPEN,
+            "microrelease", Position.MICRORELEASED,
             "closed", Position.CLOSED
     );
 
     Telemetry             mLogger;
 
     boolean               mReady;
+
     Position              mPosition;
     ServoComponent        mServo;
     Map<Position, Double> mPositions = new LinkedHashMap<>();
