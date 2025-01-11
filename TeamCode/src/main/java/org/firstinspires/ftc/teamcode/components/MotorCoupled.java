@@ -33,6 +33,8 @@ public class MotorCoupled extends MotorComponent {
 
     Telemetry                       mLogger;
 
+    int                             mFirstInvertPosition;
+    int                             mSecondInvertPosition;
     DcMotorSimple.Direction         mDirection;
 
     DcMotor                         mFirst;
@@ -45,6 +47,8 @@ public class MotorCoupled extends MotorComponent {
         mLogger = logger;
         mName   = name;
         mDirection = DcMotor.Direction.FORWARD;
+        mFirstInvertPosition = 1;
+        mSecondInvertPosition = 1;
 
         Map<String, Boolean> hw = conf.getHw();
         if((hw.size() == 2) && !conf.shallMock()) {
@@ -72,7 +76,8 @@ public class MotorCoupled extends MotorComponent {
     {
         int result = -1;
         if(mReady) {
-            result = (int) (0.5 * mFirst.getCurrentPosition() + 0.5 * mSecond.getCurrentPosition());
+            result = (int) (0.5 * mFirstInvertPosition * mFirst.getCurrentPosition() +
+                    mSecondInvertPosition * 0.5 * mSecond.getCurrentPosition());
         }
         return result;
     }
@@ -97,7 +102,8 @@ public class MotorCoupled extends MotorComponent {
     {
         int result = -1;
         if(mReady) {
-            result = (int) (0.5 * mFirst.getTargetPosition() + 0.5 * mSecond.getTargetPosition());
+            result = (int) (0.5 * mFirstInvertPosition * mFirst.getTargetPosition() +
+                    0.5 * mSecondInvertPosition * mSecond.getTargetPosition());
         }
         return result;
     }
@@ -157,8 +163,8 @@ public class MotorCoupled extends MotorComponent {
     public void	                        setTargetPosition(int position)
     {
         if(mReady) {
-            mFirst.setTargetPosition(position);
-            mSecond.setTargetPosition(position);
+            mFirst.setTargetPosition(mFirstInvertPosition * position);
+            mSecond.setTargetPosition(mSecondInvertPosition * position);
         }
     }
 

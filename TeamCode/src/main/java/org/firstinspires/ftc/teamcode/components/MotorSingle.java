@@ -35,12 +35,15 @@ public class MotorSingle extends MotorComponent {
 
     DcMotor                         mMotor;
 
+    int                             mInvertPosition;
+
     /* -------------- Constructors --------------- */
     public MotorSingle(ConfMotor conf, HardwareMap hwMap, String name, Telemetry logger)
     {
         mReady  = true;
         mLogger = logger;
         mName   = name;
+        mInvertPosition = 1;
 
         Map<String, Boolean> hw = conf.getHw();
         if((hw.size() == 1) && !conf.shallMock()) {
@@ -63,7 +66,7 @@ public class MotorSingle extends MotorComponent {
     {
         int result = -1;
         if(mReady) {
-            result = mMotor.getCurrentPosition();
+            result = mInvertPosition * mMotor.getCurrentPosition();
         }
         return result;
     }
@@ -89,7 +92,7 @@ public class MotorSingle extends MotorComponent {
     {
         int result = -1;
         if(mReady) {
-            result = mMotor.getTargetPosition();
+            result = mInvertPosition * mMotor.getTargetPosition();
         }
         return result;
     }
@@ -138,7 +141,7 @@ public class MotorSingle extends MotorComponent {
     public void	                        setTargetPosition(int position)
     {
         if(mReady) {
-            mMotor.setTargetPosition(position);
+            mMotor.setTargetPosition(mInvertPosition * position);
         }
     }
 
