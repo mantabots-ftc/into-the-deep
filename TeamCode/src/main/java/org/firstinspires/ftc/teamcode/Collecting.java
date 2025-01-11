@@ -214,12 +214,13 @@ public class Collecting {
         else { wasTriggerRightXPositifPressed = false; }
 
         logger.addLine(intakeSlides.getPositions());
+        logger.addLine(outtakeSlides.getPositions());
     }
     public void transition (){
         intakeWrist.setPosition(IntakeWrist.Position.NULL );
         intakeElbow.setPosition(IntakeElbow.Position.TRANSFER );
         intakeArm.setPosition(IntakeArm.Position.TRANSFER ) ;
-
+        intakeSlides.setPosition(IntakeSlides.Position.TRANSFER);
     }
 }
 

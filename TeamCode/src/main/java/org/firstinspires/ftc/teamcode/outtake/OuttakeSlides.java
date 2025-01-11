@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.components.MotorComponent;
 import org.firstinspires.ftc.teamcode.components.MotorMock;
 import org.firstinspires.ftc.teamcode.components.MotorCoupled;
 import org.firstinspires.ftc.teamcode.components.MotorSingle;
-import org.firstinspires.ftc.teamcode.intake.IntakeSlides;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -70,7 +69,6 @@ public class OuttakeSlides {
                 mMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                mLogger.addData( " outtake Starting position",mMotorLeft.getCurrentPosition());;
 
                 mPositionsLeft.clear();
                 Map<String, Integer> confPosition = slides.getPositions();
@@ -95,7 +93,13 @@ public class OuttakeSlides {
             else {
                 mMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+                mPositionsRight.clear();
+                Map<String, Integer> confPosition = slides.getPositions() ;
+                for (Map.Entry<String, Integer> pos : confPosition.entrySet()) {
+                    if(sConfToPosition.containsKey(pos.getKey())) {
+                        mPositionsRight.put(sConfToPosition.get(pos.getKey()), pos.getValue());
+                    }
+                }
             }
         }
 
@@ -116,8 +120,7 @@ public class OuttakeSlides {
         if (mReady) {
             mMotorLeft.setPower(0);
             mMotorRight.setPower(0);
-            mLogger.addData( "Starting position",mMotorLeft.getCurrentPosition());;
-        }
+              }
     }
 
     public void rollback(double Power) {
@@ -137,6 +140,19 @@ public class OuttakeSlides {
             mMotorLeft.setPower(0);
         }
     }
+    public String getPositions()
+    {
+        return " Outake L : " + mMotorLeft.getCurrentPosition() + "Outake R : " + mMotorRight.getCurrentPosition();
+    }
+
+    public void setPosition(Position position)
+    {
+        if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
+        mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
+        mMotorRight.setTargetPosition(mPositionsRight.get(position));
+        }
+    }
+
 
 }
 

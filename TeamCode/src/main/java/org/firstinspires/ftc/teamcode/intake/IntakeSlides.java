@@ -24,12 +24,12 @@ import java.util.Map;
 public class IntakeSlides {
     public enum Position {
         MIN,
-        TRANSITION,
+        TRANSFER,
         MAX
     };
     private static final Map<String, Position> sConfToPosition = Map.of(
             "min",  Position.MIN,
-            "transition", Position.TRANSITION,
+            "transfer", Position.TRANSFER,
             "max", Position.MAX
     );
     Telemetry            mLogger;
@@ -65,7 +65,6 @@ public class IntakeSlides {
             else {
                 mMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                mLogger.addData( "Starting position",mMotorLeft.getCurrentPosition());;
                 mPositionsLeft.clear();
                 Map<String, Integer> confPosition = slides.getPositions();
                 for (Map.Entry<String, Integer> pos : confPosition.entrySet()) {
@@ -73,9 +72,6 @@ public class IntakeSlides {
                         mPositionsLeft.put(sConfToPosition.get(pos.getKey()), pos.getValue());
                     }
                 }
-
-
-                mLogger.addData( "Starting position motor left",mMotorLeft.getCurrentPosition());;
 
             }
         }
@@ -100,8 +96,7 @@ public class IntakeSlides {
                         mPositionsRight.put(sConfToPosition.get(pos.getKey()), pos.getValue());
                     }
                 }
-                mLogger.addData( "Starting position motor right",mMotorRight.getCurrentPosition());;
-            }
+                }
         }
 
         if (!mPositionsLeft.containsKey(Position.MIN)) { mReady = false; }
