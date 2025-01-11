@@ -104,6 +104,10 @@ public class IntakeSlides {
             }
         }
 
+        if (!mPositionsLeft.containsKey(Position.MIN)) { mReady = false; }
+        if (!mPositionsRight.containsKey(Position.MIN)) { mReady = false; }
+        if (!mPositionsRight.containsKey(Position.MAX)) { mReady = false; }
+        if (!mPositionsLeft.containsKey(Position.MAX)) { mReady = false; }
 
         // Log status
         if (mReady) { logger.addLine("==>  IN SLD : OK"); }
@@ -113,9 +117,20 @@ public class IntakeSlides {
 
     public void extend(double Power)   {
         if(mReady) {
-            mMotorRight.setPower(Power);
-            mMotorLeft.setPower(Power);
-         }
+            if(mMotorLeft.getTargetPosition() < mPositionsRight.get(Position.MAX)){
+                mMotorLeft.setPower(Power);
+            }
+            if(mMotorRight.getTargetPosition() < mPositionsRight.get(Position.MAX)){
+                mMotorRight.setPower(Power);
+            }
+            if(mMotorRight.getTargetPosition() > mPositionsRight.get(Position.MAX)) {
+                mMotorRight.setPower(0);
+            }
+            if(mMotorLeft.getTargetPosition() > mPositionsRight.get(Position.MAX)) {
+                mMotorLeft.setPower(0);
+            }
+        }
+
     }
 
     public void stop() {
@@ -127,9 +142,20 @@ public class IntakeSlides {
 
     public void rollback(double Power) {
         if(mReady) {
-            mMotorRight.setPower(-Power);
-            mMotorLeft.setPower(-Power);
+            if(mMotorLeft.getTargetPosition() > mPositionsRight.get(Position.MIN)){
+                mMotorLeft.setPower(Power);
+            }
+            if(mMotorRight.getTargetPosition() > mPositionsRight.get(Position.MIN)){
+                mMotorRight.setPower(Power);
+            }
+            if(mMotorRight.getTargetPosition() < mPositionsRight.get(Position.MIN)) {
+                mMotorRight.setPower(0);
+            }
+            if(mMotorLeft.getTargetPosition() < mPositionsRight.get(Position.MIN)) {
+                mMotorLeft.setPower(0);
+            }
         }
+
     }
     public void setPosition(Position position) {
     }
