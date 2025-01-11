@@ -27,15 +27,26 @@ import org.firstinspires.ftc.teamcode.components.ServoSingle;
 public class IntakeWrist {
 
     public enum Position {
-        CENTER,
-        MIN,
-        MAX,
-        UNDEFINED
+        MINUS_TWO,
+        MINUS_ONE,
+        NULL,
+        ONE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE,
+        SIX
     };
     private static final Map<String, Position> sConfToPosition = Map.of(
-        "center", Position.CENTER,
-            "min", Position.MIN,
-            "max", Position.MAX
+            "-2", Position.MINUS_TWO,
+            "-1", Position.MINUS_ONE,
+            "0", Position.NULL,
+            "1", Position.ONE,
+            "2", Position.TWO,
+            "3", Position.THREE,
+            "4", Position.FOUR,
+            "5", Position.FIVE,
+            "6", Position.SIX
     );
 
     public static final double sIncrementRatio = 0.01;
@@ -43,20 +54,13 @@ public class IntakeWrist {
     Telemetry             mLogger;
 
     boolean               mReady;
+
     Position              mPosition;
     double                mDeltaPosition = 0;
     ServoComponent        mServo;
     Map<Position, Double> mPositions = new LinkedHashMap<>();
 
     public Position getPosition() { return mPosition; }
-
-    public double   getServo() {
-        double result = -1.0;
-        if (mPositions.containsKey(Position.CENTER)) {
-            result = mPositions.get(Position.CENTER) + mDeltaPosition;
-        }
-        return result;
-    }
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
@@ -91,40 +95,40 @@ public class IntakeWrist {
         else        { logger.addLine("==>  IN WRS : KO : " + status); }
 
         // Initialize position
-        this.setPosition(Position.CENTER);
+        this.setPosition(Position.NULL);
     }
 
     public void setPosition(Position position) {
 
         if( mPositions.containsKey(position) && mReady) {
+            mLogger.addLine(" ==> IN WRS POS : " + mPositions.get(position));
             mServo.setPosition(mPositions.get(position));
             mPosition = position;
             mDeltaPosition = 0;
         }
     }
 
-    public void turn(double increment)
-    {
-        if( mPositions.containsKey(Position.CENTER) &&
-                mPositions.containsKey(Position.MIN) &&
-                mPositions.containsKey(Position.MAX) &&
-                mReady) {
+    public void rotateUp() {
+        if(mPosition == Position.MINUS_TWO)         { this.setPosition(Position.MINUS_ONE); }
+        else if(mPosition == Position.MINUS_ONE)    { this.setPosition(Position.NULL);      }
+        else if(mPosition == Position.NULL)         { this.setPosition(Position.ONE);       }
+        else if(mPosition == Position.ONE)          { this.setPosition(Position.TWO);       }
+        else if(mPosition == Position.TWO)          { this.setPosition(Position.THREE);     }
+        else if(mPosition == Position.THREE)        { this.setPosition(Position.FOUR);      }
+        else if(mPosition == Position.FOUR)         { this.setPosition(Position.FIVE);      }
+        else if(mPosition == Position.FIVE)         { this.setPosition(Position.SIX);       }
+    }
 
-            mDeltaPosition += increment * sIncrementRatio;
-            double newPosition = mPositions.get(Position.CENTER) + mDeltaPosition;
-
-            newPosition = max(newPosition, mPositions.get(Position.MIN));
-            newPosition = min(newPosition, mPositions.get(Position.MAX));
-
-            mLogger.addLine("" + newPosition);
-            mLogger.addLine("" + mDeltaPosition);
-
-            mServo.setPosition(newPosition);
-
-            mPosition = Position.UNDEFINED;
-        }
+    public void rotateDown() {
+        if(mPosition == Position.MINUS_ONE)         { this.setPosition(Position.MINUS_TWO);  }
+        else if(mPosition == Position.NULL)         { this.setPosition(Position.MINUS_ONE);  }
+        else if(mPosition == Position.ONE)          { this.setPosition(Position.NULL);       }
+        else if(mPosition == Position.TWO)          { this.setPosition(Position.ONE);        }
+        else if(mPosition == Position.THREE)        { this.setPosition(Position.TWO);        }
+        else if(mPosition == Position.FOUR)         { this.setPosition(Position.THREE);      }
+        else if(mPosition == Position.FIVE)         { this.setPosition(Position.FOUR);       }
+        else if(mPosition == Position.SIX)          { this.setPosition(Position.FIVE);       }
     }
 
 }
-
 

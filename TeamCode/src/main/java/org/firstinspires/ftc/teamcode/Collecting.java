@@ -47,6 +47,10 @@ public class Collecting {
     boolean         wasDPadDownPressed;
     boolean         wasDPadLeftPressed;
     boolean         wasDPadRightPressed;
+    boolean         wasTriggerLeftXPositifPressed;
+    boolean         wasTriggerLeftXNegatifPressed;
+    boolean         wasTriggerRightXPositifPressed;
+    boolean         wasTriggerRightXNegatifPressed;
 
     public Collecting() {
 
@@ -65,10 +69,16 @@ public class Collecting {
         wasAPressed = false;
         wasYPressed = false;
         wasBPressed = false;
+
         wasDPadDownPressed = false;
         wasDPadUpPressed = false;
         wasDPadLeftPressed = false;
         wasDPadRightPressed = false;
+
+        wasTriggerLeftXPositifPressed = false;
+        wasTriggerLeftXNegatifPressed = false;
+        wasTriggerRightXPositifPressed = false;
+        wasTriggerRightXNegatifPressed = false;
 
     }
 
@@ -142,7 +152,7 @@ public class Collecting {
 
         if(gamepad.b) {
             logger.addLine(String.format("==> CENTER OUT WRS : " + outtakeWrist.getPosition()));
-            if(!wasBPressed){ outtakeWrist.setPosition(OuttakeWrist.Position.CENTER);}
+            if(!wasBPressed){ outtakeWrist.setPosition(OuttakeWrist.Position.NULL);}
             wasBPressed = true;
         }
         else { wasBPressed = false; }
@@ -170,15 +180,40 @@ public class Collecting {
 
         if(gamepad.dpad_right) {
             logger.addLine(String.format("==> CENTER IN WRS : " + intakeWrist.getPosition()));
-            if(!wasDPadRightPressed){ intakeWrist.setPosition(IntakeWrist.Position.CENTER);}
+            if(!wasDPadRightPressed){ intakeWrist.setPosition(IntakeWrist.Position.NULL);}
             wasDPadRightPressed = true;
         }
         else { wasDPadRightPressed = false; }
 
-        intakeWrist.turn(gamepad.left_stick_x);
-        outtakeWrist.turn(gamepad.right_stick_x);
+        if(gamepad.left_stick_x < 0) {
+            logger.addLine(String.format("==> RDW WRS : " + intakeWrist.getPosition()));
+            if(!wasTriggerLeftXNegatifPressed){ intakeWrist.rotateDown(); }
+            wasTriggerLeftXNegatifPressed = true;
+        }
+        else { wasTriggerLeftXNegatifPressed = false; }
+
+        if(gamepad.left_stick_x > 0) {
+            logger.addLine(String.format("==> RDW WRS : " + intakeWrist.getPosition()));
+            if(!wasTriggerLeftXPositifPressed){ intakeWrist.rotateUp(); }
+            wasTriggerLeftXPositifPressed = true;
+        }
+        else { wasTriggerLeftXPositifPressed = false; }
+
+        if(gamepad.right_stick_x < 0) {
+            logger.addLine(String.format("==> RDW WRS : " + outtakeWrist.getPosition()));
+            if(!wasTriggerRightXNegatifPressed){ outtakeWrist.rotateDown(); }
+            wasTriggerRightXNegatifPressed = true;
+        }
+        else { wasTriggerRightXNegatifPressed = false; }
+
+        if(gamepad.right_stick_x > 0) {
+            logger.addLine(String.format("==> RDW WRS : " + outtakeWrist.getPosition()));
+            if(!wasTriggerRightXPositifPressed){ outtakeWrist.rotateUp(); }
+            wasTriggerRightXPositifPressed = true;
+        }
+        else { wasTriggerRightXPositifPressed = false; }
+
 
     }
 }
-
 
