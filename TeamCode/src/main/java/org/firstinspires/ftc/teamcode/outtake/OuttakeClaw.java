@@ -1,98 +1,95 @@
 package org.firstinspires.ftc.teamcode.outtake;
 
+/* System includes */
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configuration includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.ServoConf;
-import org.firstinspires.ftc.teamcode.intake.IntakeArm;
+import org.firstinspires.ftc.teamcode.configurations.ConfServo;
 
-import java.util.HashMap;
-import java.util.Map;
+/* Component includes */
+import org.firstinspires.ftc.teamcode.components.ServoComponent;
+import org.firstinspires.ftc.teamcode.components.ServoMock;
+import org.firstinspires.ftc.teamcode.components.ServoCoupled;
+import org.firstinspires.ftc.teamcode.components.ServoSingle;
+import org.firstinspires.ftc.teamcode.intake.IntakeClaw;
 
 public class OuttakeClaw {
 
-    enum Position {
+    public enum Position {
         OPEN,
         CLOSED
     };
 
-    Telemetry           logger;
+    private static final Map<String, Position> sConfToPosition = Map.of(
+            "open",  Position.OPEN,
+            "closed", Position.CLOSED
+    );
 
-    boolean             isReady;
-    Position            position;
-    Servo               servo;
-    Map<String, Double> positions = new HashMap<>();
+    Telemetry             mLogger;
 
-    public Position getPosition() { return position; }
+    boolean               mReady;
+    Position              mPosition;
+    ServoComponent        mServo;
+    Map<Position, Double> mPositions = new LinkedHashMap<>();
 
-    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm) {
+    public Position getPosition() { return mPosition; }
 
-        logger = tm;
+    public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
+
+        mLogger = logger;
+        mReady = true;
 
         String status = "";
-        isReady = true;
 
-        ServoConf roll  = config.getServo("outtake-claw");
-
-        if(roll == null)  { isReady = false; }
-
-        if(!isReady) { status = " CONF" + status; }
+        // Get configuration
+        ConfServo move  = config.getServo("outtake-claw");
+        if(move == null)  { mReady = false; status += " CONF";}
         else {
 
-            servo  = hwm.tryGet(Servo.class, roll.getName());
+            // Configure servo
+            if (move.shallMock()) { mServo = new ServoMock("outtake-claw"); }
+            else if (move.getHw().size() == 1) { mServo = new ServoSingle(move, hwm, "outtake-claw", logger); }
+            else if (move.getHw().size() == 2) { mServo = new ServoCoupled(move, hwm, "outtake-claw", logger); }
 
-            if(servo == null) { isReady = false;  }
-
-            if(!isReady) { status = " HW" + status; }
-            else {
-                if (roll.getReverse()) {
-                    servo.setDirection(Servo.Direction.REVERSE);
+            mPositions.clear();
+            Map<String, Double> confPosition = move.getPositions();
+            for (Map.Entry<String, Double> pos : confPosition.entrySet()) {
+                if(sConfToPosition.containsKey(pos.getKey())) {
+                    mPositions.put(sConfToPosition.get(pos.getKey()), pos.getValue());
                 }
-
-                positions = roll.getPositions();
             }
-        }
-        if(isReady) { logger.addLine("==>  IN CL : OK"); }
-        else        { logger.addLine("==>  IN CL : KO : " + status); }
-
-        this.setOpen();
-
-    }
-
-    public void setOpen() {
-
-        if( positions.containsKey("open") && isReady) {
-
-            servo.setPosition(positions.get("open"));
-            position = Position.OPEN;
-
+            
+            if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
 
+        // Log status
+        if (mReady) { logger.addLine("==>  OUT CLW : OK"); }
+        else        { logger.addLine("==>  OUT CLW : KO : " + status); }
+
+        // Initialize position
+        this.setPosition(Position.OPEN);
     }
 
-    public void setClosed() {
 
-        if( positions.containsKey("closed") && isReady) {
+    public void setPosition(Position position) {
 
-            servo.setPosition(positions.get("closed"));
-            position = Position.CLOSED;
-
+        if( mPositions.containsKey(position) && mReady) {
+            mServo.setPosition(mPositions.get(position));
+            mPosition = position;
         }
 
     }
+
     public void switchPosition() {
-
-        if( position == Position.OPEN) { this.setClosed(); }
-        else                           { this.setOpen();   }
-
+        if( mPosition == Position.OPEN) { this.setPosition(Position.CLOSED); }
+        else                            { this.setPosition(Position.OPEN);   }
     }
-
 }
-
-

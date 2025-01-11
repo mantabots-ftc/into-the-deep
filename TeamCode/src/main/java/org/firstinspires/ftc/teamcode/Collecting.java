@@ -1,22 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
 /* Qualcomm includes */
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configuration includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
+
+/* Intake includes */
 import org.firstinspires.ftc.teamcode.intake.IntakeSlides;
 import org.firstinspires.ftc.teamcode.intake.IntakeArm;
 import org.firstinspires.ftc.teamcode.intake.IntakeElbow;
 import org.firstinspires.ftc.teamcode.intake.IntakeWrist;
 import org.firstinspires.ftc.teamcode.intake.IntakeClaw;
+
+/* Outtake includes */
 import org.firstinspires.ftc.teamcode.outtake.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.outtake.OuttakeElbow;
 import org.firstinspires.ftc.teamcode.outtake.OuttakeWrist;
@@ -39,17 +40,21 @@ public class Collecting {
 
     Gamepad         gamepad;
     boolean         wasXPressed;
+    boolean         wasAPressed;
+    boolean         wasYPressed;
+    boolean         wasBPressed;
     boolean         wasDPadUpPressed;
     boolean         wasDPadDownPressed;
     boolean         wasDPadLeftPressed;
+    boolean         wasDPadRightPressed;
 
     public Collecting() {
 
         intakeSlides = new IntakeSlides();
-        intakeArm = new IntakeArm();
-        intakeElbow = new IntakeElbow();
-        intakeWrist = new IntakeWrist();
-        intakeClaw = new IntakeClaw();
+        intakeArm    = new IntakeArm();
+        intakeElbow  = new IntakeElbow();
+        intakeWrist  = new IntakeWrist();
+        intakeClaw   = new IntakeClaw();
 
         outtakeSlides = new OuttakeSlides();
         outtakeElbow = new OuttakeElbow();
@@ -57,9 +62,13 @@ public class Collecting {
         outtakeClaw = new OuttakeClaw();
 
         wasXPressed = false;
+        wasAPressed = false;
+        wasYPressed = false;
+        wasBPressed = false;
         wasDPadDownPressed = false;
         wasDPadUpPressed = false;
         wasDPadLeftPressed = false;
+        wasDPadRightPressed = false;
 
     }
 
@@ -85,11 +94,11 @@ public class Collecting {
     public void move() {
 
         if (gamepad.left_bumper)       {
-            logger.addLine(String.format("==> EXT OUT SLD"));
+            logger.addLine("==> EXT OUT SLD");
             outtakeSlides.extend(1.0);
         }
         else if (gamepad.right_bumper) {
-            logger.addLine(String.format("==> RLB OUT SL"));
+            logger.addLine("==> RLB OUT SLD");
             outtakeSlides.rollback(1.0);
         }
         else                            {
@@ -97,11 +106,11 @@ public class Collecting {
         }
 
         if(gamepad.left_trigger > 0 )                {
-            logger.addLine(String.format("==> EXT IN SLD"));
+            logger.addLine("==> EXT IN SLD");
             intakeSlides.extend(gamepad.left_trigger);
         }
         else if (gamepad.right_trigger > 0)          {
-            logger.addLine(String.format("==> RLB IN SLD"));
+            logger.addLine("==> RLB IN SLD");
             intakeSlides.rollback(gamepad.right_trigger);
         }
         else                                         {
@@ -117,32 +126,57 @@ public class Collecting {
             wasXPressed = false;
         }
 
+        if(gamepad.y)     {
+            logger.addLine(String.format("==> MDW OUT ARM : " + outtakeElbow.getPosition()));
+            if(!wasYPressed){ outtakeElbow.moveDown(); }
+            wasYPressed = true;
+        }
+        else { wasYPressed = false; }
+
+        if(gamepad.a) {
+            logger.addLine(String.format("==> MUP OUT ARM : " + outtakeElbow.getPosition()));
+            if(!wasAPressed){ outtakeElbow.moveUp();}
+            wasAPressed = true;
+        }
+        else { wasAPressed = false; }
+
+        if(gamepad.b) {
+            logger.addLine(String.format("==> CENTER OUT WRS : " + outtakeWrist.getPosition()));
+            if(!wasBPressed){ outtakeWrist.setPosition(OuttakeWrist.Position.CENTER);}
+            wasBPressed = true;
+        }
+        else { wasBPressed = false; }
+
         if(gamepad.dpad_left) {
             logger.addLine(String.format("==> SWT IN CLW : " + intakeClaw.getPosition()));
             if(!wasDPadLeftPressed){  intakeClaw.switchPosition(); }
             wasDPadLeftPressed = true;
         }
-        else {
-            wasDPadLeftPressed = false;
-        }
+        else { wasDPadLeftPressed = false; }
 
         if(gamepad.dpad_up)     {
             logger.addLine(String.format("==> MDW IN ARM : " + intakeArm.getPosition()));
             if(!wasDPadUpPressed){ intakeElbow.moveDown(); intakeArm.moveDown(); }
             wasDPadUpPressed = true;
         }
-        else {
-            wasDPadUpPressed = false;
-        }
+        else { wasDPadUpPressed = false; }
 
         if(gamepad.dpad_down) {
             logger.addLine(String.format("==> MUP IN ARM : " + intakeArm.getPosition()));
-            if(!wasDPadDownPressed){ intakeArm.moveUp(); intakeArm.moveUp(); intakeElbow.moveUp();}
+            if(!wasDPadDownPressed){ intakeArm.moveUp(); intakeElbow.moveUp();}
             wasDPadDownPressed = true;
         }
-        else {
-            wasDPadDownPressed = false;
+        else { wasDPadDownPressed = false; }
+
+        if(gamepad.dpad_right) {
+            logger.addLine(String.format("==> CENTER IN WRS : " + intakeWrist.getPosition()));
+            if(!wasDPadRightPressed){ intakeWrist.setPosition(IntakeWrist.Position.CENTER);}
+            wasDPadRightPressed = true;
         }
+        else { wasDPadRightPressed = false; }
+
+        intakeWrist.turn(gamepad.left_stick_x);
+        outtakeWrist.turn(gamepad.right_stick_x);
 
     }
 }

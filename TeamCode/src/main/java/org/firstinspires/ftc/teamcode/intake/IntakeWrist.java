@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.teamcode.intake;
 
+/* System includes */
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -7,70 +14,115 @@ import com.qualcomm.robotcore.hardware.Servo;
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configuration includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.ServoConf;
+import org.firstinspires.ftc.teamcode.configurations.ConfServo;
 
-import java.util.HashMap;
-import java.util.Map;
+/* Component includes */
+import org.firstinspires.ftc.teamcode.components.ServoComponent;
+import org.firstinspires.ftc.teamcode.components.ServoMock;
+import org.firstinspires.ftc.teamcode.components.ServoCoupled;
+import org.firstinspires.ftc.teamcode.components.ServoSingle;
 
 public class IntakeWrist {
 
-    enum Position {
-        CENTER
+    public enum Position {
+        CENTER,
+        MIN,
+        MAX,
+        UNDEFINED
     };
+    private static final Map<String, Position> sConfToPosition = Map.of(
+        "center", Position.CENTER,
+            "min", Position.MIN,
+            "max", Position.MAX
+    );
 
-    Telemetry           logger;
+    public static final double sIncrementRatio = 0.01;
 
-    boolean             isReady;
-    Position            position;
-    Servo               servo;
-    Map<String, Double> positions = new HashMap<>();
+    Telemetry             mLogger;
 
-    public Position getPosition() { return position; }
+    boolean               mReady;
+    Position              mPosition;
+    double                mDeltaPosition = 0;
+    ServoComponent        mServo;
+    Map<Position, Double> mPositions = new LinkedHashMap<>();
 
-    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm) {
+    public Position getPosition() { return mPosition; }
 
-        logger = tm;
-
-        String status = "";
-        isReady = true;
-
-        ServoConf roll  = config.getServo("intake-wrist-roll");
-
-        if(roll == null)  { isReady = false; }
-
-        if(!isReady) { status = " CONF" + status; }
-        else {
-
-            servo  = hwm.tryGet(Servo.class, roll.getName());
-
-            if(servo == null) { isReady = false;  }
-
-            if(!isReady) { status = " HW" + status; }
-            else {
-                if (roll.getReverse()) {
-                    servo.setDirection(Servo.Direction.REVERSE);
-                }
-
-                positions = roll.getPositions();
-            }
+    public double   getServo() {
+        double result = -1.0;
+        if (mPositions.containsKey(Position.CENTER)) {
+            result = mPositions.get(Position.CENTER) + mDeltaPosition;
         }
-        if(isReady) { logger.addLine("==>  IN WR : OK"); }
-        else        { logger.addLine("==>  IN WR : KO : " + status); }
-
-        this.setCenter();
+        return result;
     }
 
-    public void setCenter() {
+    public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
-        if( positions.containsKey("center") && isReady) {
+        mLogger = logger;
+        mReady = true;
 
-            servo.setPosition(positions.get("center"));
-            position = Position.CENTER;
+        String status = "";
 
+        // Get configuration
+        ConfServo roll  = config.getServo("intake-wrist-roll");
+        if(roll == null)  { mReady = false; status += " CONF";}
+        else {
+
+            // Configure servo
+            if (roll.shallMock()) { mServo = new ServoMock("intake-wrist-roll"); }
+            else if (roll.getHw().size() == 1) { mServo = new ServoSingle(roll, hwm, "intake-wrist-roll", logger); }
+            else if (roll.getHw().size() == 2) { mServo = new ServoCoupled(roll, hwm, "intake-wrist-roll", logger); }
+
+            mPositions.clear();
+            Map<String, Double> confPosition = roll.getPositions();
+            for (Map.Entry<String, Double> pos : confPosition.entrySet()) {
+                if(sConfToPosition.containsKey(pos.getKey())) {
+                    mPositions.put(sConfToPosition.get(pos.getKey()), pos.getValue());
+                }
+            }
+
+            if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
 
+        // Log status
+        if (mReady) { logger.addLine("==>  IN WRS : OK"); }
+        else        { logger.addLine("==>  IN WRS : KO : " + status); }
+
+        // Initialize position
+        this.setPosition(Position.CENTER);
+    }
+
+    public void setPosition(Position position) {
+
+        if( mPositions.containsKey(position) && mReady) {
+            mServo.setPosition(mPositions.get(position));
+            mPosition = position;
+            mDeltaPosition = 0;
+        }
+    }
+
+    public void turn(double increment)
+    {
+        if( mPositions.containsKey(Position.CENTER) &&
+                mPositions.containsKey(Position.MIN) &&
+                mPositions.containsKey(Position.MAX) &&
+                mReady) {
+
+            mDeltaPosition += increment * sIncrementRatio;
+            double newPosition = mPositions.get(Position.CENTER) + mDeltaPosition;
+
+            newPosition = max(newPosition, mPositions.get(Position.MIN));
+            newPosition = min(newPosition, mPositions.get(Position.MAX));
+
+            mLogger.addLine("" + newPosition);
+            mLogger.addLine("" + mDeltaPosition);
+
+            mServo.setPosition(newPosition);
+
+            mPosition = Position.UNDEFINED;
+        }
     }
 
 }

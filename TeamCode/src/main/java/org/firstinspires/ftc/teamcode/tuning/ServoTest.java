@@ -24,8 +24,8 @@ public class ServoTest extends LinearOpMode {
     public static double   incrementStep  = 0.01;
     public static double   targetPos      = 0.0;
     public static long     sleepMs        = 200;
-    public static boolean  isReverse      = false;
-    public static boolean  useConfReverse = true;
+    public static boolean  reverseForce   = false;
+    public static boolean  reverseFromConf = true;
 
     private static boolean holdPosition   = false;
 
@@ -39,16 +39,20 @@ public class ServoTest extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
 
-        Configuration.s_Current.m_servos.forEach((key, value) -> {
-            Servo temp = hardwareMap.tryGet(Servo.class,value.getName());
-            if(useConfReverse) {
-                if (temp != null && value.getReverse()) { temp.setDirection(Servo.Direction.REVERSE); }
-                else if (temp != null) {                  temp.setDirection(Servo.Direction.FORWARD); }
+        Configuration.s_Current.getForTuning().forEach((key, value) -> {
+            Map.Entry<String, Boolean> hw = value.getHw(0);
+            Servo temp = null;
+            if(hw != null) { temp = hardwareMap.tryGet(Servo.class,hw.getKey());}
+            if( reverseFromConf) {
+                if (temp != null && value.getHw(0).getValue()) {
+                    temp.setDirection(Servo.Direction.REVERSE);
+                }
+                else if (temp != null) {
+                    temp.setDirection(Servo.Direction.FORWARD);
+                }
             }
-            else {
-                if (temp != null && isReverse) { temp.setDirection(Servo.Direction.REVERSE); }
-                else if (temp != null) {         temp.setDirection(Servo.Direction.FORWARD); }
-            }
+            else { temp.setDirection(Servo.Direction.FORWARD); }
+            if (temp != null && reverseForce) { temp.setDirection(Servo.Direction.REVERSE); }
 
             if(temp != null) { servos.put(key,temp); }
         });
@@ -56,13 +60,6 @@ public class ServoTest extends LinearOpMode {
         if (!servos.isEmpty()) {
 
             entryList = new ArrayList<>(servos.entrySet());
-
-            Collections.sort(entryList, new Comparator<Map.Entry<String,Servo>>() {
-                @Override
-                public int compare(Map.Entry<String,Servo> entry1, Map.Entry<String,Servo> entry2) {
-                    return entry1.getKey().compareTo(entry2.getKey());
-                }
-            });
 
             iterator = entryList.listIterator();
             if (iterator.hasNext()) {
