@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.components.MotorComponent;
 import org.firstinspires.ftc.teamcode.components.MotorMock;
 import org.firstinspires.ftc.teamcode.components.MotorCoupled;
 import org.firstinspires.ftc.teamcode.components.MotorSingle;
+import org.firstinspires.ftc.teamcode.outtake.OuttakeSlides;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -152,12 +153,18 @@ public class IntakeSlides {
         }
 
     }
-    public void setPosition(Position position) {
-    }
+
 
     public String getPositions()
     {
         return "L : " + mMotorLeft.getCurrentPosition() + " R : " + mMotorRight.getCurrentPosition();
+    }
+    public void setPosition(Position position)
+    {
+        if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
+            mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
+            mMotorRight.setTargetPosition(mPositionsRight.get(position));
+        }
     }
 
 }
