@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.components.MotorComponent;
 import org.firstinspires.ftc.teamcode.components.MotorMock;
 import org.firstinspires.ftc.teamcode.components.MotorCoupled;
 import org.firstinspires.ftc.teamcode.components.MotorSingle;
+import org.firstinspires.ftc.teamcode.intake.IntakeSlides;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class OuttakeSlides {
             if (!mMotorLeft.isReady()) { mReady = false; status += " HW";}
             else {
                 mMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER  );
 
 
                 mPositionsLeft.clear();
@@ -92,7 +93,7 @@ public class OuttakeSlides {
             if (!mMotorRight.isReady()) { mReady = false; status += " HW";}
             else {
                 mMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER  );
                 mPositionsRight.clear();
                 Map<String, Integer> confPosition = slides.getPositions() ;
                 for (Map.Entry<String, Integer> pos : confPosition.entrySet()) {
@@ -103,6 +104,12 @@ public class OuttakeSlides {
             }
         }
 
+
+        if (!mPositionsLeft.containsKey(Position.MIN)) { mReady = false; }
+        if (!mPositionsRight.containsKey(Position.MIN)) { mReady = false; }
+        if (!mPositionsRight.containsKey(Position.MAX)) { mReady = false; }
+        if (!mPositionsLeft.containsKey(Position.MAX)) { mReady = false; }
+
         // Log status
         if (mReady) { logger.addLine("==>  OUT SLD : OK"); }
         else        { logger.addLine("==>  OUT SLD : KO : " + status); }
@@ -111,9 +118,21 @@ public class OuttakeSlides {
 
     public void extend(double Power)   {
         if(mReady) {
-            mMotorLeft.setPower(Power);
-            mMotorRight.setPower(Power);
+            
+            if(mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)){
+                mMotorLeft.setPower(Power);
+            }
+            if(mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MAX)){
+                mMotorRight.setPower(Power);
+            }
+            if(mMotorRight.getCurrentPosition() > mPositionsRight.get(Position.MAX)) {
+                mMotorRight.setPower(0);
+            }
+            if(mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MAX)) {
+                mMotorLeft.setPower(0);
+            }
         }
+
     }
 
     public void stop() {
@@ -150,8 +169,13 @@ public class OuttakeSlides {
         if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
         mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
         mMotorRight.setTargetPosition(mPositionsRight.get(position));
+        mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
+        mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
+
+
         }
     }
+
 
 
 }

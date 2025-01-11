@@ -25,10 +25,17 @@ public class Tuning extends Configuration {
         /* Intake configuration */
         mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",true));         // EH Motor
         mMotors.put("intake-slides-right",new ConfMotor("intakeSlidesRight",true));        // EH Motor 1         // EH Motor 2
+        mMotors.get("intake-slides-left").addPosition("min",-10 );
+        mMotors.get("intake-slides-right").addPosition("min",-10 );
+        mMotors.get("intake-slides-left").addPosition("transition",5 );
+        mMotors.get("intake-slides-right").addPosition("transition",5 );
+        mMotors.get("intake-slides-left").addPosition("max",20 );
+        mMotors.get("intake-slides-right").addPosition("max",20 );
         mServos.put("intake-arm-pitch", new ConfServo(
                 "intakeArmPitchLeft", false,                                                  // CH Servo 5
                 "intakeArmPitchRight", true                                                               // EH Servo 1
         ));
+
         mServos.put("intake-elbow-pitch", new ConfServo("intakeElbowPitch", false));         // EH Servo 0
         mServos.put("intake-wrist-roll", new ConfServo("intakeWristRoll", false));           // CH Servo 4
         mServos.put("intake-claw", new ConfServo("intakeClaw", false));                      // EH Servo 2
@@ -36,12 +43,12 @@ public class Tuning extends Configuration {
         /* Outtake configuration */
         mMotors.put("outtake-slides-left",new ConfMotor("outtakeSlidesLeft",false));         // EH Motor
         mMotors.put("outtake-slides-right",new ConfMotor("outtakeSlidesRight",true));        // EH Motor 1
-        mMotors.get("outtake-slides-left").addPosition("min",10 );
-        mMotors.get("outtake-slides-right").addPosition("min",10 );
-        mMotors.get("outtake-slides-left").addPosition("transition",5 );
+        mMotors.get("outtake-slides-left").addPosition("min",-100 );
+        mMotors.get("outtake-slides-right").addPosition("min",-100);
+        mMotors.get("outtake-slides-left").addPosition("transition",5);
         mMotors.get("outtake-slides-right").addPosition("transition",5 );
-        mMotors.get("outtake-slides-left").addPosition("max",30 );
-        mMotors.get("outtake-slides-right").addPosition("max",30 );
+        mMotors.get("outtake-slides-left").addPosition("max",10 );
+        mMotors.get("outtake-slides-right").addPosition("max",10 );
 
 
         mServos.put("outtake-wrist-roll", new ConfServo("outtakeWristRoll", false));         // CH Servo 0

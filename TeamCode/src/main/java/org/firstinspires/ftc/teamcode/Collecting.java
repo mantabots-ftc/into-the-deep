@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 /* Qualcomm includes */
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -184,6 +185,11 @@ public class Collecting {
             wasDPadRightPressed = true;
         }
         else { wasDPadRightPressed = false; }
+
+        if(gamepad.left_stick_button) {
+            outtakeSlides.setPosition(OuttakeSlides.Position.TRANSITION );
+            logger.addData("coucou",0);
+        }
 
         if(gamepad.left_stick_x < 0) {
             logger.addLine(String.format("==> RDW WRS : " + intakeWrist.getPosition()));
