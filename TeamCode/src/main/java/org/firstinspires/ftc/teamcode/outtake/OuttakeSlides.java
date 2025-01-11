@@ -17,9 +17,22 @@ import org.firstinspires.ftc.teamcode.components.MotorComponent;
 import org.firstinspires.ftc.teamcode.components.MotorMock;
 import org.firstinspires.ftc.teamcode.components.MotorCoupled;
 import org.firstinspires.ftc.teamcode.components.MotorSingle;
+import org.firstinspires.ftc.teamcode.intake.IntakeSlides;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class OuttakeSlides {
-
+    public enum Position {
+        MIN,
+        TRANSITION,
+        MAX
+    };
+    private static final Map<String, Position> sConfToPosition = Map.of(
+            "min",  Position.MIN,
+            "transition", Position.TRANSITION,
+            "max", Position.MAX
+    );
     Telemetry            mLogger;
 
     boolean              mReady;
@@ -29,6 +42,10 @@ public class OuttakeSlides {
 
     TouchSensor          mTouchSensorRight;
     TouchSensor          mTouchSensorLeft;
+
+    Map<Position, Integer> mPositionsLeft = new LinkedHashMap<>();
+    Map<Position, Integer> mPositionsRight = new LinkedHashMap<>();
+
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
@@ -52,7 +69,16 @@ public class OuttakeSlides {
             else {
                 mMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                
+
+                mLogger.addData( " outtake Starting position",mMotorLeft.getCurrentPosition());;
+
+                mPositionsLeft.clear();
+                Map<String, Integer> confPosition = slides.getPositions();
+                for (Map.Entry<String, Integer> pos : confPosition.entrySet()) {
+                    if(sConfToPosition.containsKey(pos.getKey())) {
+                        mPositionsLeft.put(sConfToPosition.get(pos.getKey()), pos.getValue());
+                    }
+                }
             }
         }
 
@@ -90,6 +116,7 @@ public class OuttakeSlides {
         if (mReady) {
             mMotorLeft.setPower(0);
             mMotorRight.setPower(0);
+            mLogger.addData( "Starting position",mMotorLeft.getCurrentPosition());;
         }
     }
 

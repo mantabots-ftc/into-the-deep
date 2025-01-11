@@ -8,23 +8,22 @@
 package org.firstinspires.ftc.teamcode.configurations;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-public class V1 extends Configuration {
+public class Tuning extends Configuration {
 
     protected void initialize(){
 
-        /* Moving configuration : Positive power makes wheel go forward */
-        mMotors.put("front-left-wheel",new ConfMotor("frontLeft",false));      // CH Motor 0
-        mMotors.put("back-left-wheel",new ConfMotor("backLeft",false));        // CH Motor 1
-        mMotors.put("front-right-wheel",new ConfMotor("frontRight",true));     // CH Motor 2
-        mMotors.put("back-right-wheel",new ConfMotor("backRight",true));       // CH Motor 3
+        /* Moving configuration */
+        mMotors.put("front-left-wheel",new ConfMotor("frontLeft",true));    // CH Motor 0
+        mMotors.put("back-left-wheel",new ConfMotor("backLeft",true));      // CH Motor 1
+        mMotors.put("front-right-wheel",new ConfMotor("frontRight",false)); // CH Motor 2
+        mMotors.put("back-right-wheel",new ConfMotor("backRight",true));    // CH Motor 3
 
         mImus.put("built-in", new ConfImu("imu", RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         mImus.put("otos", new ConfImu("sensor_otos"));                                     // EH I2C 3
 
         /* Intake configuration */
-        mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",false));         // EH Motor
+        mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",true));         // EH Motor
         mMotors.put("intake-slides-right",new ConfMotor("intakeSlidesRight",true));        // EH Motor 1         // EH Motor 2
         mServos.put("intake-arm-pitch", new ConfServo(
                 "intakeArmPitchLeft", false,                                                  // CH Servo 5

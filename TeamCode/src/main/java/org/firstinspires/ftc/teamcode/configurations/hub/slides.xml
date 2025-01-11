@@ -2,9 +2,9 @@
 <Robot type="FirstInspires-FTC">
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
         <LynxModule name="Control Hub" port="173">
-            <goBILDA5202SeriesMotor name="backRight" port="0" />
+            <goBILDA5202SeriesMotor name="intakeSlidesRight" port="0" />
             <goBILDA5202SeriesMotor name="outtakeSlidesRight" port="1" />
-            <goBILDA5202SeriesMotor name="backLeft" port="2" />
+            <goBILDA5202SeriesMotor name="intakeSlidesLeft" port="2" />
             <goBILDA5202SeriesMotor name="outtakeSlidesLeft" port="3" />
             <Servo name="left_hand" port="0" />
             <Servo name="servo" port="1" />

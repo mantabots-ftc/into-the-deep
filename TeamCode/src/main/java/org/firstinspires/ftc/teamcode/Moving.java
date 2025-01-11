@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 /* System includes */
-import java.util.Map;
 
 /* Qualcomm includes */
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;

@@ -16,6 +16,7 @@ public class ConfMotor {
     private       boolean               mShallMock   = false;
 
     private final Map<String, Boolean>  mHw    = new LinkedHashMap<>();
+    private final Map<String, Integer >    mPositions   = new LinkedHashMap<>();
 
     public ConfMotor(String Name, boolean ShallReverse)
     {
@@ -33,8 +34,11 @@ public class ConfMotor {
     }
 
     public void addHw(String Name, boolean ShallReverse) { mHw.put(Name,ShallReverse);  }
+    public void addPosition(String Name, Integer Value)   { mPositions.put(Name, Value); }
 
-    public Map<String, Boolean> getHw()                  { return mHw;}
+    public Map<String, Boolean>       getHw()                  { return mHw;}
+    public boolean                    shallMock()              { return mShallMock; }
+    public Map<String, Integer>        getPositions()           { return mPositions; }
     public Map.Entry<String, Boolean> getHw(int index)         {
         Map.Entry<String, Boolean> result = null;
         int iHw = 0;
@@ -43,7 +47,14 @@ public class ConfMotor {
             iHw ++;
         }
         return result;
+
     }
-    public boolean              shallMock()              { return mShallMock; }
+    public Integer              getPosition(String Name) {
+        if(mPositions.containsKey(Name)) {
+            return mPositions.get(Name);
+        }
+        return -100000;
+    }
+
 
 }
