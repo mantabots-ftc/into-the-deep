@@ -24,7 +24,9 @@ public class V1 extends Configuration {
         mImus.put("otos", new ConfImu("sensor_otos"));                                     // EH I2C 3
 
         /* Intake configuration */
-        mMotors.put("intake-slides",new ConfMotor("intakeSlides",true));                     // EH Motor 2
+        mMotors.put("intake-slides",new ConfMotor(
+                "intakeSlidesLeft",false,                                                      // EH Motor 3
+                "intakeSlidesRight",true));                                                           // EH Motor 2
         mServos.put("intake-arm-pitch", new ConfServo(
                  "intakeArmPitchLeft", false,                                                  // CH Servo 5
                         "intakeArmPitchRight", true                                                               // EH Servo 1
@@ -34,16 +36,18 @@ public class V1 extends Configuration {
         mServos.put("intake-claw", new ConfServo("intakeClaw", false));                      // EH Servo 2
 
         /* Outtake configuration */
-        mMotors.put("outtake-slides",new ConfMotor(
-                "outtakeSlidesLeft",false,                                                     // EH Motor 0
-                "outtakeSlidesRight",true                                                                         // EH Motor 1
-        ));
+        mMotors.put("outtake-slides-left",new ConfMotor("outtakeSlidesLeft",false));         // EH Motor
+        mMotors.put("outtake-slides-right",new ConfMotor("outtakeSlidesRight",true));        // EH Motor 1
+
         mServos.put("outtake-wrist-roll", new ConfServo("outtakeWristRoll", false));         // CH Servo 0
         mServos.put("outtake-claw", new ConfServo("outtakeClaw", false));                    // CH Servo 1
         mServos.put("outtake-elbow-pitch", new ConfServo(
                 "outtakeElbowPitchLeft", false,                                                // CH Servo 2
                 "outtakeElbowPitchRight", false)                                                      // CH Servo 3
         );
+
+        mSensors.put("outtake-slides-left", new ConfSensor("outtakeSlidesLeftTouch", ConfSensor.Type.TOUCH));   //  Digital 2
+        mSensors.put("outtake-slides-right", new ConfSensor("outtakeSlidesRightTouch", ConfSensor.Type.TOUCH)); //  Digital 2                            //  Digital 2
 
         /* Intake servos reference positions */
         mServos.get("intake-arm-pitch").addPosition("transfer", 0.97);

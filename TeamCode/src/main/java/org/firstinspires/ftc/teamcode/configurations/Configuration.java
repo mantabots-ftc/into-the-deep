@@ -13,9 +13,10 @@ import java.util.Map;
 
 abstract public class Configuration {
     // Map to store hardware components by reference name
-    protected final  Map<String, ConfMotor> mMotors = new LinkedHashMap<>();
-    protected final  Map<String, ConfImu>   mImus   = new LinkedHashMap<>();
-    protected final  Map<String, ConfServo> mServos = new LinkedHashMap<>();
+    protected final  Map<String, ConfMotor>  mMotors  = new LinkedHashMap<>();
+    protected final  Map<String, ConfImu>    mImus    = new LinkedHashMap<>();
+    protected final  Map<String, ConfServo>  mServos  = new LinkedHashMap<>();
+    protected final  Map<String, ConfSensor> mSensors = new LinkedHashMap<>();
 
     // FOR TUNING ONLY !!!
     protected final Map<String, ConfServo> mSingleServos = new LinkedHashMap<>();
@@ -38,6 +39,12 @@ abstract public class Configuration {
     public ConfServo getServo(String name) {
         if (mServos.containsKey(name)) { return mServos.get(name); }
         else                           { return null;            }
+    }
+
+    // Method to retrieve a sensor by its reference name
+    public ConfSensor getSensor(String name) {
+        if (mSensors.containsKey(name)) { return mSensors.get(name); }
+        else                            { return null;               }
     }
 
     public Map<String, ConfServo>   getForTuning() { return mSingleServos; }

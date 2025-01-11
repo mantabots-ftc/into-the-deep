@@ -4,7 +4,8 @@
         <LynxModule name="Expansion Hub 2" port="2">
             <goBILDA5202SeriesMotor name="outtakeSlidesLeft" port="0" />
             <goBILDA5202SeriesMotor name="outtakeSlidesRight" port="1" />
-            <goBILDA5202SeriesMotor name="intakeSlides" port="2" />
+            <goBILDA5202SeriesMotor name="intakeSlidesRight" port="2" />
+            <goBILDA5202SeriesMotor name="intakeSlidesLeft" port="3" />
             <Servo name="intakeElbowPitch" port="0" />
             <Servo name="intakeArmPitchRight" port="1" />
             <Servo name="intakeClaw" port="2" />

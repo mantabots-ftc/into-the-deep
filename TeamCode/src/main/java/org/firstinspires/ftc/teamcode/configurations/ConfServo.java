@@ -48,6 +48,7 @@ public class ConfServo {
         }
         return result;
     }
+
     public Double               getPosition(String Name) {
         if(mPositions.containsKey(Name)) {
             return mPositions.get(Name);
