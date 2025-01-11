@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.outtake;
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,7 +24,11 @@ public class OuttakeSlides {
 
     boolean              mReady;
 
-    MotorComponent       mMotor;
+    MotorComponent       mMotorRight;
+    MotorComponent       mMotorLeft;
+
+    TouchSensor          mTouchSensorRight;
+    TouchSensor          mTouchSensorLeft;
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
@@ -31,20 +36,40 @@ public class OuttakeSlides {
         mReady = true;
         String status = "";
 
-        ConfMotor slides = config.getMotor("outtake-slides");
+        mTouchSensorRight = hwm.touchSensor.get("outtakeSlidesRightTouch");
+        mTouchSensorLeft = hwm.touchSensor.get("outtakeSlidesLeftTouch");
+
+        ConfMotor slides = config.getMotor("outtake-slides-left");
         if(slides == null)  { mReady = false; status += " CONF";}
         else {
 
-            // Configure servo
-            if (slides.shallMock()) { mMotor = new MotorMock("outtake-slides"); }
-            else if (slides.getHw().size() == 1) { mMotor = new MotorSingle(slides, hwm, "outtake-slides", logger); }
-            else if (slides.getHw().size() == 2) { mMotor = new MotorCoupled(slides, hwm, "outtake-slides", logger); }
+            // Configure motor
+            if (slides.shallMock()) { mMotorLeft = new MotorMock("outtake-slides-left"); }
+            else if (slides.getHw().size() == 1) { mMotorLeft = new MotorSingle(slides, hwm, "outtake-slides-left", logger); }
+            else if (slides.getHw().size() == 2) { mMotorLeft = new MotorCoupled(slides, hwm, "outtake-slides-left", logger); }
 
-            if (!mMotor.isReady()) { mReady = false; status += " HW";}
+            if (!mMotorLeft.isReady()) { mReady = false; status += " HW";}
             else {
-                mMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                mMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                mMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 
+            }
+        }
+
+        slides = config.getMotor("outtake-slides-right");
+        if(slides == null)  { mReady = false; status += " CONF";}
+        else {
+
+            // Configure motor
+            if (slides.shallMock()) { mMotorRight = new MotorMock("outtake-slides-right"); }
+            else if (slides.getHw().size() == 1) { mMotorRight = new MotorSingle(slides, hwm, "outtake-slides-right", logger); }
+            else if (slides.getHw().size() == 2) { mMotorRight = new MotorCoupled(slides, hwm, "outtake-slides-right", logger); }
+
+            if (!mMotorRight.isReady()) { mReady = false; status += " HW";}
+            else {
+                mMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             }
         }
 
@@ -56,19 +81,33 @@ public class OuttakeSlides {
 
     public void extend(double Power)   {
         if(mReady) {
-            mMotor.setPower(Power);
+            mMotorLeft.setPower(Power);
+            mMotorRight.setPower(Power);
         }
     }
 
     public void stop() {
         if (mReady) {
-            mMotor.setPower(0);
+            mMotorLeft.setPower(0);
+            mMotorRight.setPower(0);
         }
     }
 
     public void rollback(double Power) {
-        if(mReady) {
-            mMotor.setPower(-Power);
+        if(mReady && !mTouchSensorLeft.isPressed()) {
+            mMotorLeft.setPower(-Power);
+
+        }
+        if(mReady && !mTouchSensorRight.isPressed()) {
+            mMotorRight.setPower(-Power);
+        }
+
+
+        if(mReady && mTouchSensorRight.isPressed()) {
+            mMotorRight.setPower(0);
+        }
+        if(mReady && mTouchSensorLeft.isPressed()) {
+            mMotorLeft.setPower(0);
         }
     }
 
