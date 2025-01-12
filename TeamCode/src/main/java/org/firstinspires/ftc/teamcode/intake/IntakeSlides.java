@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /* Configurations includes */
-import org.firstinspires.ftc.teamcode.components.ServoComponent;
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
 import org.firstinspires.ftc.teamcode.configurations.ConfMotor;
 
@@ -26,7 +25,8 @@ public class IntakeSlides {
     public enum Position {
         MIN,
         TRANSFER,
-        MAX
+        MAX,
+        UNKNOWN
     };
     private static final Map<String, Position> sConfToPosition = Map.of(
             "min",  Position.MIN,
@@ -112,8 +112,12 @@ public class IntakeSlides {
     }
 
     public void extend(double Power)   {
-        if(mReady) {
-            mLogger.addLine("" + mMotorLeft.getTargetPosition() + " " + mPositionsRight.get(Position.MAX));
+        if(mReady)
+        {
+            mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mPosition = Position.UNKNOWN;
+
             if(mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)){
                 mMotorLeft.setPower(Power);
             }
@@ -138,7 +142,12 @@ public class IntakeSlides {
     }
 
     public void rollback(double Power) {
-        if(mReady) {
+        if(mReady)
+        {
+            mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mPosition = Position.UNKNOWN;
+
             if(mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MIN)){
                 mMotorLeft.setPower(-Power);
             }
@@ -154,12 +163,31 @@ public class IntakeSlides {
         }
 
     }
-    public void setPosition(Position position) {
+
+    public void setPosition(Position position)
+    {
+        if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
+            mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
+            mMotorRight.setTargetPosition(mPositionsRight.get(position));
+
+            mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
+            mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
+
+            mMotorLeft.setPower(1.0);
+            mMotorRight.setPower(1.0);
+
+            while(mMotorRight.isBusy() || mMotorLeft.isBusy()) {
+                mMotorRight.setPower(1.0);
+                mMotorLeft.setPower(1.0);
+            }
+
+            mPosition = position;
+        }
     }
 
     public String getPositions()
     {
-        return "L : " + mMotorLeft.getCurrentPosition() + " R : " + mMotorRight.getCurrentPosition();
+        return "POS IN SLD L : " + mMotorLeft.getCurrentPosition() + " R : " + mMotorRight.getCurrentPosition();
     }
 
 }

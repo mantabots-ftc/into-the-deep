@@ -74,6 +74,10 @@ public class MotorCoupled extends MotorComponent {
             else if(mSecond != null)                { mSecond.setDirection(DcMotor.Direction.FORWARD);}
 
             if(invert.getValue()) { mSecondInvertPosition = -1; }
+
+            if(mFirst != null) { mFirst.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); }
+            if(mSecond != null) { mSecond.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); }
+
         }
 
         if(mFirst  == null) { mReady = false; }

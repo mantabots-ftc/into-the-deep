@@ -25,17 +25,20 @@ import java.util.Map;
 public class OuttakeSlides {
     public enum Position {
         MIN,
-        TRANSITION,
-        MAX
+        TRANSFER,
+        MAX,
+        UNKNOWN
     };
     private static final Map<String, Position> sConfToPosition = Map.of(
             "min",  Position.MIN,
-            "transition", Position.TRANSITION,
+            "transfer", Position.TRANSFER,
             "max", Position.MAX
     );
     Telemetry            mLogger;
 
     boolean              mReady;
+
+    Position             mPosition;
 
     MotorComponent       mMotorRight;
     MotorComponent       mMotorLeft;
@@ -118,7 +121,11 @@ public class OuttakeSlides {
 
     public void extend(double Power)   {
         if(mReady) {
-            
+
+            mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mPosition = Position.UNKNOWN;
+
             if(mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)){
                 mMotorLeft.setPower(Power);
             }
@@ -139,40 +146,53 @@ public class OuttakeSlides {
         if (mReady) {
             mMotorLeft.setPower(0);
             mMotorRight.setPower(0);
-              }
+        }
     }
 
     public void rollback(double Power) {
-        if(mReady && !mTouchSensorLeft.isPressed()) {
-            mMotorLeft.setPower(-Power);
+        if(mReady) {
 
-        }
-        if(mReady && !mTouchSensorRight.isPressed()) {
-            mMotorRight.setPower(-Power);
-        }
+            mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+            mPosition = Position.UNKNOWN;
 
-        if(mReady && mTouchSensorRight.isPressed()) {
-            mMotorRight.setPower(0);
-        }
-        if(mReady && mTouchSensorLeft.isPressed()) {
-            mMotorLeft.setPower(0);
+            if (mReady && !mTouchSensorLeft.isPressed()) {
+                mMotorLeft.setPower(-Power);
+            }
+            if (mReady && !mTouchSensorRight.isPressed()) {
+                mMotorRight.setPower(-Power);
+            }
+            if (mReady && mTouchSensorRight.isPressed()) {
+                mMotorRight.setPower(0);
+            }
+            if (mReady && mTouchSensorLeft.isPressed()) {
+                mMotorLeft.setPower(0);
+            }
         }
     }
+
     public String getPositions()
     {
-        return " Outake L : " + mMotorLeft.getCurrentPosition() + "Outake R : " + mMotorRight.getCurrentPosition();
+        return "POS OUT SLD L : " + mMotorLeft.getCurrentPosition() + " R : " + mMotorRight.getCurrentPosition();
     }
 
     public void setPosition(Position position)
     {
         if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
-        mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
-        mMotorRight.setTargetPosition(mPositionsRight.get(position));
-        mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
-        mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
 
+            mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
+            mMotorRight.setTargetPosition(mPositionsRight.get(position));
 
+            mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while(mMotorRight.isBusy() || mMotorLeft.isBusy()) {
+                mMotorRight.setPower(1.0);
+                mMotorLeft.setPower(1.0);
+            }
+
+            mPosition = position;
         }
     }
 

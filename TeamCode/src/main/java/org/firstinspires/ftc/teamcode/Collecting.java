@@ -116,6 +116,11 @@ public class Collecting {
             outtakeSlides.stop();
         }
 
+        if(gamepad.right_stick_button) {
+            outtakeSlides.setPosition(OuttakeSlides.Position.TRANSFER );
+            logger.addData("coucou",0);
+        }
+
         if(gamepad.left_trigger > 0 )                {
             logger.addLine("==> EXT IN SLD");
             intakeSlides.extend(gamepad.left_trigger);
@@ -126,6 +131,10 @@ public class Collecting {
         }
         else                                         {
             intakeSlides.stop();
+        }
+
+        if(gamepad.left_stick_button) {
+            intakeSlides.setPosition(IntakeSlides.Position.TRANSFER );
         }
 
         if(gamepad.x)                 {
@@ -186,34 +195,31 @@ public class Collecting {
         }
         else { wasDPadRightPressed = false; }
 
-        if(gamepad.left_stick_button) {
-            outtakeSlides.setPosition(OuttakeSlides.Position.TRANSITION );
-            logger.addData("coucou",0);
-        }
+
 
         if(gamepad.left_stick_x < 0) {
-            logger.addLine(String.format("==> RDW WRS : " + intakeWrist.getPosition()));
+            logger.addLine(String.format("==> RDW IN WRS : " + intakeWrist.getPosition()));
             if(!wasTriggerLeftXNegatifPressed){ intakeWrist.rotateDown(); }
             wasTriggerLeftXNegatifPressed = true;
         }
         else { wasTriggerLeftXNegatifPressed = false; }
 
         if(gamepad.left_stick_x > 0) {
-            logger.addLine(String.format("==> RDW WRS : " + intakeWrist.getPosition()));
+            logger.addLine(String.format("==> RUP IN WRS : " + intakeWrist.getPosition()));
             if(!wasTriggerLeftXPositifPressed){ intakeWrist.rotateUp(); }
             wasTriggerLeftXPositifPressed = true;
         }
         else { wasTriggerLeftXPositifPressed = false; }
 
         if(gamepad.right_stick_x < 0) {
-            logger.addLine(String.format("==> RDW WRS : " + outtakeWrist.getPosition()));
+            logger.addLine(String.format("==> RDW OUT WRS : " + outtakeWrist.getPosition()));
             if(!wasTriggerRightXNegatifPressed){ outtakeWrist.rotateDown(); }
             wasTriggerRightXNegatifPressed = true;
         }
         else { wasTriggerRightXNegatifPressed = false; }
 
         if(gamepad.right_stick_x > 0) {
-            logger.addLine(String.format("==> RDW WRS : " + outtakeWrist.getPosition()));
+            logger.addLine(String.format("==> RUP OUT WRS : " + outtakeWrist.getPosition()));
             if(!wasTriggerRightXPositifPressed){ outtakeWrist.rotateUp(); }
             wasTriggerRightXPositifPressed = true;
         }

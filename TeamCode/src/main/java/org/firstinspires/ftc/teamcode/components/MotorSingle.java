@@ -62,6 +62,8 @@ public class MotorSingle extends MotorComponent {
 
             if(invert.getValue()) { mInvertPosition = -1; }
 
+            if(mMotor != null) { mMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); }
+
         }
 
         if(mMotor  == null) { mReady = false; }
