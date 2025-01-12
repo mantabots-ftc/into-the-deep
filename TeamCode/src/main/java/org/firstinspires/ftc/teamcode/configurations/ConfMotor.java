@@ -51,8 +51,6 @@ public class ConfMotor {
         mHw.put(Name2,ShallReverse2);
         mEncoder.put(Name1,ShallInvertEncoder1);
         mEncoder.put(Name2,ShallInvertEncoder2);
-        mEncoder.put(Name1,false);
-        mEncoder.put(Name2,false);
         mShallMock    = false;
     }
 

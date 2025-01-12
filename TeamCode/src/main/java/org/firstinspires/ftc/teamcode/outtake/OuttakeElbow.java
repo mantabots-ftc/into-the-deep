@@ -25,16 +25,15 @@ public class OuttakeElbow {
 
     public enum Position {
         TRANSFER,
-        OVER_SUBMERSIBLE,
-        LOOKING,
-        GRABBING
+        DROP,
+        OFF
     };
 
     private static final Map<String, Position> sConfToPosition = Map.of(
             "transfer", Position.TRANSFER,
-            "overSub",  Position.OVER_SUBMERSIBLE ,
-            "look",     Position.LOOKING,
-            "grab",     Position.GRABBING
+            "drop",Position.DROP,
+            "off",Position.OFF
+
     );
 
     Telemetry               mLogger;
@@ -80,7 +79,7 @@ public class OuttakeElbow {
         else        { logger.addLine("==>  OUT ELB : KO : " + status); }
 
         // Initialize position
-        this.setPosition(Position.TRANSFER);
+        //this.setPosition(Position.TRANSFER);
 
     }
 
@@ -93,15 +92,13 @@ public class OuttakeElbow {
     }
 
     public void moveUp() {
-        if(mPosition == Position.GRABBING)              { this.setPosition(Position.LOOKING);          }
-        else if(mPosition == Position.LOOKING)          { this.setPosition(Position.OVER_SUBMERSIBLE); }
-        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setPosition(Position.TRANSFER);         }
+        if(mPosition == Position.OFF)              { this.setPosition(Position.TRANSFER);          }
+        else if(mPosition == Position.TRANSFER)          { this.setPosition(Position.DROP); }
     }
 
     public void moveDown() {
-        if(mPosition == Position.LOOKING)               { this.setPosition(Position.GRABBING);         }
-        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setPosition(Position.LOOKING);          }
-        else if(mPosition == Position.TRANSFER)         { this.setPosition(Position.OVER_SUBMERSIBLE); }
+        if(mPosition == Position.DROP)               { this.setPosition(Position.TRANSFER);         }
+        else if(mPosition == Position.TRANSFER) { this.setPosition(Position.OFF);          }
     }
 }
 

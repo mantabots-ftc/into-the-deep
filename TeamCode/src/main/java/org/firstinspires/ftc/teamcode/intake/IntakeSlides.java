@@ -118,18 +118,19 @@ public class IntakeSlides {
             mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mPosition = Position.UNKNOWN;
 
-            if(mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)){
+            boolean shall_work = (
+                    (mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)) &&
+                    (mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MAX)));
+
+            if(shall_work){
                 mMotorLeft.setPower(Power);
-            }
-            if(mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MAX)){
                 mMotorRight.setPower(Power);
             }
-            if(mMotorRight.getCurrentPosition() > mPositionsRight.get(Position.MAX)) {
+            if(!shall_work) {
                 mMotorRight.setPower(0);
-            }
-            if(mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MAX)) {
                 mMotorLeft.setPower(0);
             }
+
         }
 
     }
@@ -148,18 +149,19 @@ public class IntakeSlides {
             mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mPosition = Position.UNKNOWN;
 
-            if(mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MIN)){
+            boolean shall_work = (
+                    (mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MIN)) &&
+                    (mMotorRight.getCurrentPosition() > mPositionsLeft.get(Position.MIN)));
+
+            if(shall_work){
                 mMotorLeft.setPower(-Power);
-            }
-            if(mMotorRight.getCurrentPosition() > mPositionsRight.get(Position.MIN)){
                 mMotorRight.setPower(-Power);
             }
-            if(mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MIN)) {
+            if(!shall_work) {
                 mMotorRight.setPower(0);
-            }
-            if(mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MIN)) {
                 mMotorLeft.setPower(0);
             }
+
         }
 
     }
@@ -167,19 +169,23 @@ public class IntakeSlides {
     public void setPosition(Position position)
     {
         if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
-            mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
+           // mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
             mMotorRight.setTargetPosition(mPositionsRight.get(position));
 
-            mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
+            //mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
             mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
 
-            mMotorLeft.setPower(1.0);
-            mMotorRight.setPower(1.0);
-
-            while(mMotorRight.isBusy() || mMotorLeft.isBusy()) {
-                mMotorRight.setPower(1.0);
-                mMotorLeft.setPower(1.0);
+            while(mMotorRight.isBusy()) {//|| mMotorLeft.isBusy()) {
+              //  mLogger.addLine("" + mMotorLeft.getCurrentPosition());
+                //mLogger.addLine("" + mMotorLeft.getTargetPosition());
+                mLogger.addLine("" + mMotorRight.getCurrentPosition());
+                mLogger.addLine("" + mMotorRight.getTargetPosition());
+                mLogger.update();
+                mMotorRight.setPower(0.1);
+                //mMotorLeft.setPower(0.1);
             }
+
+
 
             mPosition = position;
         }

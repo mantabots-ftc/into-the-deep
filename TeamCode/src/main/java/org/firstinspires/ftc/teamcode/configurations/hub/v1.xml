@@ -4,12 +4,11 @@
         <LynxModule name="Expansion Hub 2" port="2">
             <goBILDA5202SeriesMotor name="outtakeSlidesLeft" port="0" />
             <goBILDA5202SeriesMotor name="outtakeSlidesRight" port="1" />
-            <goBILDA5202SeriesMotor name="intakeSlides" port="2" />
+            <goBILDA5202SeriesMotor name="intakeSlidesRight" port="2" />
+            <goBILDA5202SeriesMotor name="intakeSlidesLeft" port="3" />
             <Servo name="intakeElbowPitch" port="0" />
             <Servo name="intakeArmPitchRight" port="1" />
             <Servo name="intakeClaw" port="2" />
-            <RevTouchSensor name="outtakeSlidesRightTouch" port="3" />
-            <RevTouchSensor name="outtakeSlidesLeftTouch" port="1" />
             <SparkFunOTOS2 name="sensor_otos" port="0" bus="3" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
@@ -23,6 +22,8 @@
             <Servo name="outtakeElbowPitchRight" port="3" />
             <Servo name="intakeWristRoll" port="4" />
             <Servo name="intakeArmPitchLeft" port="5" />
+            <RevTouchSensor name="outtakeSlidesRightTouch" port="3" />
+            <RevTouchSensor name="outtakeSlidesLeftTouch" port="1" />
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>

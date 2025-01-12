@@ -23,16 +23,29 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OuttakeSlides {
+
     public enum Position {
         MIN,
-        TRANSFER,
+
         MAX,
-        UNKNOWN
-    };
-    private static final Map<String, Position> sConfToPosition = Map.of(
-            "min",  Position.MIN,
+        UNKNOWN,
+        TRANSFER,
+        HIGH_BASKET,
+        LOW_BASKET,
+        LOW_SUBMERSIBLE,
+        HIGH_SUBMERSIBLE
+
+        };
+
+    private static final Map<String,Position> sConfToPosition = Map.of(
             "transfer", Position.TRANSFER,
+            "highBasket",  Position.HIGH_BASKET ,
+            "lowBasket",     Position.LOW_BASKET,
+            "lowSubmersible",     Position.LOW_SUBMERSIBLE,
+            "highSubmersible", Position.HIGH_SUBMERSIBLE,
+            "min",  Position.MIN,
             "max", Position.MAX
+
     );
     Telemetry            mLogger;
 
@@ -126,16 +139,16 @@ public class OuttakeSlides {
             mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mPosition = Position.UNKNOWN;
 
-            if(mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)){
+            boolean shall_work = (
+                    (mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)) &&
+                    (mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MAX)));
+
+            if(shall_work){
                 mMotorLeft.setPower(Power);
-            }
-            if(mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MAX)){
                 mMotorRight.setPower(Power);
             }
-            if(mMotorRight.getCurrentPosition() > mPositionsRight.get(Position.MAX)) {
+            if(!shall_work) {
                 mMotorRight.setPower(0);
-            }
-            if(mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MAX)) {
                 mMotorLeft.setPower(0);
             }
         }
@@ -157,18 +170,20 @@ public class OuttakeSlides {
 
             mPosition = Position.UNKNOWN;
 
-            if (mReady && !mTouchSensorLeft.isPressed()) {
+            boolean shall_work = (
+
+                    (mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MIN)) &&
+                    (mMotorRight.getCurrentPosition() > mPositionsRight.get(Position.MIN)));
+
+            if(shall_work){
                 mMotorLeft.setPower(-Power);
-            }
-            if (mReady && !mTouchSensorRight.isPressed()) {
                 mMotorRight.setPower(-Power);
             }
-            if (mReady && mTouchSensorRight.isPressed()) {
+            if(!shall_work) {
                 mMotorRight.setPower(0);
-            }
-            if (mReady && mTouchSensorLeft.isPressed()) {
                 mMotorLeft.setPower(0);
             }
+
         }
     }
 
@@ -181,15 +196,15 @@ public class OuttakeSlides {
     {
         if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
 
-            mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
+           // mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
             mMotorRight.setTargetPosition(mPositionsRight.get(position));
 
             mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+           // mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            while(mMotorRight.isBusy() || mMotorLeft.isBusy()) {
-                mMotorRight.setPower(1.0);
-                mMotorLeft.setPower(1.0);
+            while(mMotorRight.isBusy()){ //|| mMotorLeft.isBusy()) {
+                mMotorRight.setPower(0.1);
+                //mMotorLeft.setPower(0.1);
             }
 
             mPosition = position;

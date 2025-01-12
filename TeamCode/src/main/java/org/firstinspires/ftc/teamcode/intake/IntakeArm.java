@@ -26,14 +26,16 @@ public class IntakeArm {
         TRANSFER,
         OVER_SUBMERSIBLE,
         LOOKING,
-        GRABBING
+        GRABBING,
+        OFF
     };
 
     private static final Map<String, Position> sConfToPosition = Map.of(
         "transfer", Position.TRANSFER,
         "overSub",  Position.OVER_SUBMERSIBLE ,
         "look",     Position.LOOKING,
-        "grab",     Position.GRABBING
+        "grab",     Position.GRABBING,
+            "off",  Position.OFF
     );
 
     Telemetry               mLogger;
