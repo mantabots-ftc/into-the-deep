@@ -46,15 +46,21 @@ public class MotorSingle extends MotorComponent {
         mInvertPosition = 1;
 
         Map<String, Boolean> hw = conf.getHw();
-        if((hw.size() == 1) && !conf.shallMock()) {
+        Map<String, Boolean> encoders = conf.getEncoders();
+        if((hw.size() == 1) && (encoders.size() == 1) && !conf.shallMock()) {
 
             List<Map.Entry<String, Boolean>> motors = new ArrayList<>(hw.entrySet());
-            ListIterator<Map.Entry<String, Boolean>> iterator = motors.listIterator();
+            List<Map.Entry<String, Boolean>> inverts = new ArrayList<>(encoders.entrySet());
+            ListIterator<Map.Entry<String, Boolean>> hwiterator = motors.listIterator();
+            ListIterator<Map.Entry<String, Boolean>> inviterator = inverts.listIterator();
 
-            Map.Entry<String,Boolean> motor = iterator.next();
+            Map.Entry<String,Boolean> motor = hwiterator.next();
+            Map.Entry<String,Boolean> invert = inviterator.next();
             mMotor = hwMap.tryGet(DcMotor.class, motor.getKey());
             if(mMotor != null && motor.getValue()) { mMotor.setDirection(DcMotor.Direction.REVERSE);}
             else if(mMotor != null)                { mMotor.setDirection(DcMotor.Direction.FORWARD);}
+
+            if(invert.getValue()) { mInvertPosition = -1; }
 
         }
 

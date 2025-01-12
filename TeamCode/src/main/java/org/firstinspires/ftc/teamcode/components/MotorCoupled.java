@@ -51,20 +51,29 @@ public class MotorCoupled extends MotorComponent {
         mSecondInvertPosition = 1;
 
         Map<String, Boolean> hw = conf.getHw();
-        if((hw.size() == 2) && !conf.shallMock()) {
+        Map<String, Boolean> encoders = conf.getEncoders();
+        if((hw.size() == 2) && (encoders.size() == 2) && !conf.shallMock()) {
 
             List<Map.Entry<String, Boolean>> motors = new ArrayList<>(hw.entrySet());
-            ListIterator<Map.Entry<String, Boolean>> iterator = motors.listIterator();
+            List<Map.Entry<String, Boolean>> inverts = new ArrayList<>(encoders.entrySet());
+            ListIterator<Map.Entry<String, Boolean>> hwiterator = motors.listIterator();
+            ListIterator<Map.Entry<String, Boolean>> inviterator = inverts.listIterator();
 
-            Map.Entry<String,Boolean> motor = iterator.next();
+            Map.Entry<String,Boolean> motor = hwiterator.next();
+            Map.Entry<String,Boolean> invert = inviterator.next();
             mFirst = hwMap.tryGet(DcMotor.class, motor.getKey());
             if(mFirst != null && motor.getValue()) { mFirst.setDirection(DcMotor.Direction.REVERSE);}
             else if(mFirst != null)                { mFirst.setDirection(DcMotor.Direction.FORWARD);}
 
-            motor = iterator.next();
+            if(invert.getValue()) { mFirstInvertPosition = -1; }
+
+            motor = hwiterator.next();
+            invert = inviterator.next();
             mSecond = hwMap.tryGet(DcMotor.class, motor.getKey());
             if(mSecond != null && motor.getValue()) { mSecond.setDirection(DcMotor.Direction.REVERSE);}
             else if(mSecond != null)                { mSecond.setDirection(DcMotor.Direction.FORWARD);}
+
+            if(invert.getValue()) { mSecondInvertPosition = -1; }
         }
 
         if(mFirst  == null) { mReady = false; }

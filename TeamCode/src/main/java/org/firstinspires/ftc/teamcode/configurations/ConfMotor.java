@@ -60,9 +60,9 @@ public class ConfMotor {
     public void addPosition(String Name, Integer Value)   { mPositions.put(Name, Value); }
 
     public Map<String, Boolean>       getHw()                  { return mHw;}
-    public Map<String, Boolean>       getEncoder()             { return mEncoder;}
+    public Map<String, Boolean>       getEncoders()             { return mEncoder;}
     public boolean                    shallMock()              { return mShallMock; }
-    public Map<String, Integer>        getPositions()          { return mPositions; }
+    public Map<String, Integer>       getPositions()          { return mPositions; }
     public Map.Entry<String, Boolean> getHw(int index)         {
         Map.Entry<String, Boolean> result = null;
         int iHw = 0;

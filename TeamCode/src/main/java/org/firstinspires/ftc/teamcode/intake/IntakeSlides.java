@@ -113,16 +113,17 @@ public class IntakeSlides {
 
     public void extend(double Power)   {
         if(mReady) {
-            if(mMotorLeft.getTargetPosition() < mPositionsRight.get(Position.MAX)){
+            mLogger.addLine("" + mMotorLeft.getTargetPosition() + " " + mPositionsRight.get(Position.MAX));
+            if(mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)){
                 mMotorLeft.setPower(Power);
             }
-            if(mMotorRight.getTargetPosition() < mPositionsRight.get(Position.MAX)){
+            if(mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MAX)){
                 mMotorRight.setPower(Power);
             }
-            if(mMotorRight.getTargetPosition() > mPositionsRight.get(Position.MAX)) {
+            if(mMotorRight.getCurrentPosition() > mPositionsRight.get(Position.MAX)) {
                 mMotorRight.setPower(0);
             }
-            if(mMotorLeft.getTargetPosition() > mPositionsRight.get(Position.MAX)) {
+            if(mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MAX)) {
                 mMotorLeft.setPower(0);
             }
         }
@@ -138,16 +139,16 @@ public class IntakeSlides {
 
     public void rollback(double Power) {
         if(mReady) {
-            if(mMotorLeft.getTargetPosition() > mPositionsRight.get(Position.MIN)){
-                mMotorLeft.setPower(Power);
+            if(mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MIN)){
+                mMotorLeft.setPower(-Power);
             }
-            if(mMotorRight.getTargetPosition() > mPositionsRight.get(Position.MIN)){
-                mMotorRight.setPower(Power);
+            if(mMotorRight.getCurrentPosition() > mPositionsRight.get(Position.MIN)){
+                mMotorRight.setPower(-Power);
             }
-            if(mMotorRight.getTargetPosition() < mPositionsRight.get(Position.MIN)) {
+            if(mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MIN)) {
                 mMotorRight.setPower(0);
             }
-            if(mMotorLeft.getTargetPosition() < mPositionsRight.get(Position.MIN)) {
+            if(mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MIN)) {
                 mMotorLeft.setPower(0);
             }
         }

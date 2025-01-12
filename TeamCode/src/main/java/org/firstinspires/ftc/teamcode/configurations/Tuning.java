@@ -24,7 +24,7 @@ public class Tuning extends Configuration {
 
         /* Intake configuration */
         mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",true));         // EH Motor
-        mMotors.put("intake-slides-right",new ConfMotor("intakeSlidesRight",true));        // EH Motor 1         // EH Motor 2
+        mMotors.put("intake-slides-right",new ConfMotor("intakeSlidesRight",true, true));        // EH Motor 1         // EH Motor 2
         mMotors.get("intake-slides-left").addPosition("min",-10 );
         mMotors.get("intake-slides-right").addPosition("min",-10 );
         mMotors.get("intake-slides-left").addPosition("transition",5 );
@@ -41,8 +41,8 @@ public class Tuning extends Configuration {
         mServos.put("intake-claw", new ConfServo("intakeClaw", false));                      // EH Servo 2
 
         /* Outtake configuration */
-        mMotors.put("outtake-slides-left",new ConfMotor("outtakeSlidesLeft",false));         // EH Motor
-        mMotors.put("outtake-slides-right",new ConfMotor("outtakeSlidesRight",true));        // EH Motor 1
+        mMotors.put("outtake-slides-left",new ConfMotor("outtakeSlidesLeft",false, true));         // EH Motor
+        mMotors.put("outtake-slides-right",new ConfMotor("outtakeSlidesRight",true,true));        // EH Motor 1
         mMotors.get("outtake-slides-left").addPosition("min",-100 );
         mMotors.get("outtake-slides-right").addPosition("min",-100);
         mMotors.get("outtake-slides-left").addPosition("transition",5);
