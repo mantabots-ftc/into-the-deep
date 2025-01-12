@@ -162,7 +162,7 @@ public class Collecting {
 
         if(gamepad.b) {
             logger.addLine(String.format("==> CENTER OUT WRS : " + outtakeWrist.getPosition()));
-            if(!wasBPressed){ outtakeWrist.setPosition(OuttakeWrist.Position.NULL);}
+            if(!wasBPressed){ this.transition() ;}
             wasBPressed = true;
         }
         else { wasBPressed = false; }
@@ -190,7 +190,7 @@ public class Collecting {
 
         if(gamepad.dpad_right) {
             logger.addLine(String.format("==> CENTER IN WRS : " + intakeWrist.getPosition()));
-            if(!wasDPadRightPressed){ intakeWrist.setPosition(IntakeWrist.Position.NULL);}
+            if(!wasDPadRightPressed){ this.retract() ;}
             wasDPadRightPressed = true;
         }
         else { wasDPadRightPressed = false; }
