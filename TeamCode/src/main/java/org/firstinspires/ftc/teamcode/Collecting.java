@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 /* Qualcomm includes */
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -71,10 +70,14 @@ public class Collecting {
     boolean         wasDPadDownPressed;
     boolean         wasDPadLeftPressed;
     boolean         wasDPadRightPressed;
-    boolean         wasTriggerLeftXPositifPressed;
-    boolean         wasTriggerLeftXNegatifPressed;
-    boolean         wasTriggerRightXPositifPressed;
-    boolean         wasTriggerRightXNegatifPressed;
+    boolean         wasLeftStickXPositivePressed;
+    boolean         wasLeftStickXNegativePressed;
+    boolean         wasRightStickXPositivePressed;
+    boolean         wasRightStickXNegativePressed;
+    boolean         wasRightBumperPressed;
+    boolean         wasLeftBumperPressed;
+    boolean         wasRightStickButtonPressed;
+    boolean         wasLeftStickButtonPressed;
 
 
     public Collecting() {
@@ -100,10 +103,15 @@ public class Collecting {
         wasDPadLeftPressed = false;
         wasDPadRightPressed = false;
 
-        wasTriggerLeftXPositifPressed = false;
-        wasTriggerLeftXNegatifPressed = false;
-        wasTriggerRightXPositifPressed = false;
-        wasTriggerRightXNegatifPressed = false;
+        wasLeftStickXPositivePressed = false;
+        wasLeftStickXNegativePressed = false;
+        wasRightStickXPositivePressed = false;
+        wasRightStickXNegativePressed = false;
+
+        wasRightBumperPressed = false;
+        wasLeftBumperPressed = false;
+        wasRightStickButtonPressed = false;
+        wasLeftStickButtonPressed = false;
 
         transitionMode = TransitionMode.NONE;
         retractMode = RetractMode.NONE;
@@ -144,8 +152,11 @@ public class Collecting {
         }
 
         if(gamepad.right_stick_button) {
-            outtakeSlides.setPosition(OuttakeSlides.Position.TRANSFER );
+            logger.addLine(String.format("==> IN SLD TO TRANSFER"));
+            if(!wasRightStickButtonPressed) { outtakeSlides.setPosition(OuttakeSlides.Position.TRANSFER ); }
+            wasRightStickButtonPressed = true;
         }
+        else { wasRightStickButtonPressed = false; }
 
         if(gamepad.left_trigger > 0 )                {
             logger.addLine("==> EXT IN SLD");
@@ -160,17 +171,18 @@ public class Collecting {
         }
 
         if(gamepad.left_stick_button) {
-            intakeSlides.setPosition(IntakeSlides.Position.TRANSFER );
+            logger.addLine(String.format("==> IN SLD TO TRANSFER"));
+            if(!wasLeftStickButtonPressed) { intakeSlides.setPosition(IntakeSlides.Position.TRANSFER ); }
+            wasLeftStickButtonPressed = true;
         }
+        else { wasLeftStickButtonPressed = false; }
 
         if(gamepad.x)                 {
             logger.addLine(String.format("==> SWT OUT CLW : " + outtakeClaw.getPosition()));
             if(!wasXPressed){ outtakeClaw.switchPosition(); }
             wasXPressed = true;
         }
-        else {
-            wasXPressed = false;
-        }
+        else { wasXPressed = false; }
 
         if(gamepad.y)     {
             logger.addLine(String.format("==> MDW OUT ARM : " + outtakeElbow.getPosition()));
@@ -187,7 +199,7 @@ public class Collecting {
         else { wasAPressed = false; }
 
         if(gamepad.b) {
-            logger.addLine(String.format("==> CENTER OUT WRS : " + outtakeWrist.getPosition()));
+            logger.addLine(String.format("==> TRANSITION"));
             if(!wasBPressed){ this.transition() ;}
             wasBPressed = true;
         }
@@ -215,7 +227,7 @@ public class Collecting {
         else { wasDPadDownPressed = false; }
 
         if(gamepad.dpad_right) {
-            logger.addLine(String.format("==> CENTER IN WRS : " + intakeWrist.getPosition()));
+            logger.addLine(String.format("==> RETRACT"));
             if(!wasDPadRightPressed){ this.retract() ;}
             wasDPadRightPressed = true;
         }
@@ -223,31 +235,31 @@ public class Collecting {
 
         if(gamepad.left_stick_x < 0) {
             logger.addLine(String.format("==> RDW IN WRS : " + intakeWrist.getPosition()));
-            if(!wasTriggerLeftXNegatifPressed){ intakeWrist.rotateDown(); }
-            wasTriggerLeftXNegatifPressed = true;
+            if(!wasLeftStickXNegativePressed){ intakeWrist.rotateDown(); }
+            wasLeftStickXNegativePressed = true;
         }
-        else { wasTriggerLeftXNegatifPressed = false; }
+        else { wasLeftStickXNegativePressed = false; }
 
         if(gamepad.left_stick_x > 0) {
             logger.addLine(String.format("==> RUP IN WRS : " + intakeWrist.getPosition()));
-            if(!wasTriggerLeftXPositifPressed){ intakeWrist.rotateUp(); }
-            wasTriggerLeftXPositifPressed = true;
+            if(!wasLeftStickXPositivePressed){ intakeWrist.rotateUp(); }
+            wasLeftStickXPositivePressed = true;
         }
-        else { wasTriggerLeftXPositifPressed = false; }
+        else { wasLeftStickXPositivePressed = false; }
 
         if(gamepad.right_stick_x < 0) {
             logger.addLine(String.format("==> RDW OUT WRS : " + outtakeWrist.getPosition()));
-            if(!wasTriggerRightXNegatifPressed){ outtakeWrist.rotateDown(); }
-            wasTriggerRightXNegatifPressed = true;
+            if(!wasRightStickXNegativePressed){ outtakeWrist.rotateDown(); }
+            wasRightStickXNegativePressed = true;
         }
-        else { wasTriggerRightXNegatifPressed = false; }
+        else { wasRightStickXNegativePressed = false; }
 
         if(gamepad.right_stick_x > 0) {
             logger.addLine(String.format("==> RUP OUT WRS : " + outtakeWrist.getPosition()));
-            if(!wasTriggerRightXPositifPressed){ outtakeWrist.rotateUp(); }
-            wasTriggerRightXPositifPressed = true;
+            if(!wasRightStickXPositivePressed){ outtakeWrist.rotateUp(); }
+            wasRightStickXPositivePressed = true;
         }
-        else { wasTriggerRightXPositifPressed = false; }
+        else { wasRightStickXPositivePressed = false; }
 
         if(transitionMode != TransitionMode.NONE) { this.transition(); }
         if(retractMode != RetractMode.NONE)       { this.retract();    }
