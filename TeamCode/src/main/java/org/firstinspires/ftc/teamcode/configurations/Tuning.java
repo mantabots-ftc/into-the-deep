@@ -2,7 +2,7 @@
    Copyright (c) [2024] FASNY
    All rights reserved
    -------------------------------------------------------
-   Configuration for the robot second version (18th of january)
+   Configuration to use chassis as a model for V! slides
    ------------------------------------------------------- */
 
 package org.firstinspires.ftc.teamcode.configurations;
@@ -43,13 +43,6 @@ public class Tuning extends Configuration {
         /* Outtake configuration */
         mMotors.put("outtake-slides-left",new ConfMotor("outtakeSlidesLeft",true, false));         // EH Motor
         mMotors.put("outtake-slides-right",new ConfMotor("outtakeSlidesRight",false,false));        // EH Motor 1
-        mMotors.get("outtake-slides-left").addPosition("min",-1000 );
-        mMotors.get("outtake-slides-right").addPosition("min",-1000);
-        mMotors.get("outtake-slides-left").addPosition("transfer",5);
-        mMotors.get("outtake-slides-right").addPosition("transfer",5 );
-        mMotors.get("outtake-slides-left").addPosition("max",200 );
-        mMotors.get("outtake-slides-right").addPosition("max",200 );
-
 
         mServos.put("outtake-wrist-roll", new ConfServo("outtakeWristRoll", false));         // CH Servo 0
         mServos.put("outtake-claw", new ConfServo("outtakeClaw", false));                    // CH Servo 1
@@ -57,6 +50,14 @@ public class Tuning extends Configuration {
                 "outtakeElbowPitchLeft", false,                                                // CH Servo 2
                 "outtakeElbowPitchRight", false)                                                      // CH Servo 3
         );
+
+        /* Motors reference positions */
+        mMotors.get("outtake-slides-left").addPosition("min",-1000 );
+        mMotors.get("outtake-slides-right").addPosition("min",-1000);
+        mMotors.get("outtake-slides-left").addPosition("transfer",5);
+        mMotors.get("outtake-slides-right").addPosition("transfer",5 );
+        mMotors.get("outtake-slides-left").addPosition("max",200 );
+        mMotors.get("outtake-slides-right").addPosition("max",200 );
 
 
         /* Intake servos reference positions */
@@ -84,6 +85,7 @@ public class Tuning extends Configuration {
         mServos.get("intake-claw").addPosition("microrelease", 0.98);
         mServos.get("intake-claw").addPosition("open", 0.62);
 
+        /* Outtake servos reference positions */
         mServos.get("outtake-wrist-roll").addPosition("-2", 0.84);
         mServos.get("outtake-wrist-roll").addPosition("-1", 0.775);
         mServos.get("outtake-wrist-roll").addPosition("0", 0.7);

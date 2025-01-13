@@ -21,32 +21,24 @@ public class V1 extends Configuration {
         mMotors.put("back-right-wheel",new ConfMotor("backRight",true));       // CH Motor 3
 
         mImus.put("built-in", new ConfImu("imu", RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
-        mImus.put("otos", new ConfImu("sensor_otos"));                                     // EH I2C 3
+        mImus.put("otos", new ConfImu("sensor_otos"));                                                // EH I2C 3
 
         /* Intake configuration */
         mMotors.put("intake-slides",new ConfMotor(
-                "intakeSlidesLeft",false, false,                             // EH Motor 3
-                "intakeSlidesRight",true, false));                                  // EH Motor 2
+                "intakeSlidesLeft",false, false,                            // EH Motor 3
+                "intakeSlidesRight",true, false));                                 // EH Motor 2
         mServos.put("intake-arm-pitch", new ConfServo(
-                "intakeArmPitchLeft", false,                                                  // CH Servo 5     4bSPL
-                "intakeArmPitchRight", true                                                                      // EH Servo 1     4bSPR
+                "intakeArmPitchLeft", false,                                                 // CH Servo 5     4bSPL
+                "intakeArmPitchRight", true                                                                     // EH Servo 1     4bSPR
         ));
-        mServos.put("intake-elbow-pitch", new ConfServo("intakeElbowPitch", false));         // EH Servo 0     CSPIn
-        mServos.put("intake-wrist-roll", new ConfServo("intakeWristRoll", false));           // CH Servo 4     CSRoIn
-        mServos.put("intake-claw", new ConfServo("intakeClaw", false));                      // EH Servo 2     CSIn
+        mServos.put("intake-elbow-pitch", new ConfServo("intakeElbowPitch", false));        // EH Servo 0     CSPIn
+        mServos.put("intake-wrist-roll", new ConfServo("intakeWristRoll", false));          // CH Servo 4     CSRoIn
+        mServos.put("intake-claw", new ConfServo("intakeClaw", false));                     // EH Servo 2     CSIn
 
         /* Outtake configuration */
         mMotors.put("outtake-slides-left",new ConfMotor(
-                "outtakeSlidesLeft",true, false,                               // EH Motor 0
-                       "outtakeSlidesRight",false, false));                           // EH Motor 1
-        mMotors.get("outtake-slides").addPosition("min",0 );
-        mMotors.get("outtake-slides").addPosition("transfer",0 );
-        mMotors.get("outtake-slides").addPosition("max",4156 );
-        mMotors.get("outtake-slides").addPosition("highBasket",10 );
-        mMotors.get("outtake-slides").addPosition("lowBasket",10 );
-        mMotors.get("outtake-slides").addPosition("lowSubmersible",10 );
-        mMotors.get("outtake-slides").addPosition("highSubmersible",10 );
-
+                "outtakeSlidesLeft",true, false,                              // EH Motor 0
+                       "outtakeSlidesRight",false, false));                          // EH Motor 1
 
         mServos.put("outtake-wrist-roll", new ConfServo("outtakeWristRoll", false));         // CH Servo 0     CSRoOut
         mServos.put("outtake-claw", new ConfServo("outtakeClaw", false));                    // CH Servo 1     CSOut
@@ -55,6 +47,18 @@ public class V1 extends Configuration {
                 "outtakeElbowPitchRight", false)                                                      // CH Servo 3     CSPLOut
         );
 
+        mMotors.get("intake-slides").addPosition("min",0 );
+        mMotors.get("intake-slides").addPosition("transfer",177 );
+        mMotors.get("intake-slides").addPosition("max",358 );
+
+        /* Outtake motors reference positions */
+        mMotors.get("outtake-slides").addPosition("min",0 );
+        mMotors.get("outtake-slides").addPosition("transfer",0 );
+        mMotors.get("outtake-slides").addPosition("max",4156 );
+        mMotors.get("outtake-slides").addPosition("highBasket",10 );
+        mMotors.get("outtake-slides").addPosition("lowBasket",10 );
+        mMotors.get("outtake-slides").addPosition("lowSubmersible",10 );
+        mMotors.get("outtake-slides").addPosition("highSubmersible",10 );
 
         /* Intake servos reference positions */
         mServos.get("intake-arm-pitch").addPosition("transfer", 0.97);
@@ -62,7 +66,6 @@ public class V1 extends Configuration {
         mServos.get("intake-arm-pitch").addPosition("look", 0.44);
         mServos.get("intake-arm-pitch").addPosition("grab", 0.39);
         mServos.get("intake-arm-pitch").addPosition("off", 1.0);
-
 
         mServos.get("intake-elbow-pitch").addPosition("transfer", 0.15);
         mServos.get("intake-elbow-pitch").addPosition("grab", 0.68);
@@ -84,6 +87,7 @@ public class V1 extends Configuration {
         mServos.get("intake-claw").addPosition("microrelease", 0.98);
         mServos.get("intake-claw").addPosition("open", 0.62);
 
+        /* Outtake servos reference positions */
         mServos.get("outtake-wrist-roll").addPosition("-2", 0.0);
         mServos.get("outtake-wrist-roll").addPosition("-1", 0.0675);
         mServos.get("outtake-wrist-roll").addPosition("0", 0.135);
@@ -105,6 +109,7 @@ public class V1 extends Configuration {
     }
 
     protected void initializeTuning() {
+
         mSingleServos.put("intake-arm-left-pitch", new ConfServo("intakeArmPitchLeft", false));
         mSingleServos.put("intake-arm-right-pitch", new ConfServo("intakeArmPitchRight", true));
         mSingleServos.put("intake-elbow-pitch", new ConfServo("intakeElbowPitch", false));
@@ -115,5 +120,6 @@ public class V1 extends Configuration {
         mSingleServos.put("outtake-claw", new ConfServo("outtakeClaw", false));
         mSingleServos.put("outtake-elbow-left-pitch", new ConfServo("outtakeElbowPitchLeft", false));
         mSingleServos.put("outtake-elbow-right-pitch", new ConfServo("outtakeElbowPitchRight", true));
+
     }
 }

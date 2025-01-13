@@ -16,9 +16,9 @@ public class ConfMotor {
     // To select if the motor shall be mocked --- not yet activated
     private       boolean               mShallMock   = false;
 
-    // Mapping between motor name and the motor direction
+    // Mapping between motor name on the hub and the motor direction
     private final Map<String, Boolean>  mHw    = new LinkedHashMap<>();
-    // Mapping between motor name and the encoder correction (even when direction is corrected, the encoder may still decrease when power is positive)
+    // Mapping between motor name on the hub and the encoder correction (even when direction is corrected, the encoder may still decrease when power is positive)
     private final Map<String, Boolean>  mEncoder    = new LinkedHashMap<>();
     // Reference encoder positions for the given motor (or motor couple)
     private final Map<String, Integer > mPositions   = new LinkedHashMap<>();
@@ -102,6 +102,8 @@ public class ConfMotor {
         return result;
 
     }
+
+    // Return target position by its name
     public Integer              getPosition(String Name) {
         if(mPositions.containsKey(Name)) {
             return mPositions.get(Name);

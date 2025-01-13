@@ -37,21 +37,24 @@ public class OuttakeClaw {
             "closed",       Position.CLOSED
     );
 
-    private static int sTimeOut = 100;
+    private static int    sTimeOut = 100; // Timeout in ms
 
-    Telemetry             mLogger;
+    Telemetry             mLogger;      // Local logger
 
-    boolean               mReady;
-    SmartTimer            mTimer;
+    boolean               mReady;       // True if component is able to fulfil its mission
+    SmartTimer            mTimer;       // Timer for timeout management
 
-    Position              mPosition;
-    ServoComponent        mServo;
-    Map<Position, Double> mPositions;
+    Position              mPosition;    // Current claw position
+    ServoComponent        mServo;       // Servos (coupled if specified by the configuration) driving the claw
+    Map<Position, Double> mPositions;   // Link between positions enumerated and servos positions
 
+    // Return current reference position
     public Position getPosition() { return mPosition; }
 
+    // Check if the component is currently moving on command
     public boolean isMoving() { return mTimer.isArmed();}
 
+    // Initialize component from configuration
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
@@ -90,7 +93,8 @@ public class OuttakeClaw {
         this.setPosition(Position.OPEN);
     }
 
-
+    // Make the servo reach current position. A timer is armed, and the servo won't respond until it is unarmed.
+    // By the time, the servo should have reached its target position
     public void setPosition(Position position) {
 
         if( mPositions.containsKey(position) && mReady && !this.isMoving()) {
@@ -101,6 +105,7 @@ public class OuttakeClaw {
 
     }
 
+    // Switch claw position between open and closed
     public void switchPosition() {
         if( mPosition == Position.OPEN) { this.setPosition(Position.CLOSED); }
         else                            { this.setPosition(Position.OPEN);   }

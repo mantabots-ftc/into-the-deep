@@ -41,25 +41,29 @@ public class IntakeElbow {
             "off",  Position.OFF
     );
 
-    private static int sTimeOut = 100;
+    private static int      sTimeOut = 100; // Timeout in ms
 
-    Telemetry               mLogger;
+    Telemetry               mLogger;      // Local logger
 
-    boolean                 mReady;
-    SmartTimer              mTimer;
+    boolean                 mReady;       // True if component is able to fulfil its mission
+    SmartTimer              mTimer;       // Timer for timeout management
 
-    Position                mPosition;
-    ServoComponent          mServo;
-    Map<Position, Double>   mPositions   = new LinkedHashMap<>();
+    Position                mPosition;    // Current elbow position
+    ServoComponent          mServo;       // Servos (coupled if specified by the configuration) driving the elbow
+    Map<Position, Double>   mPositions;   // Link between positions enumerated and servos positions
 
+    // Return current reference position
     public Position getPosition() { return mPosition; }
 
+    // Check if the component is currently moving on command
     public boolean isMoving() { return mTimer.isArmed();}
 
+    // Initialize component from configuration
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
         mReady = true;
+        mPositions   = new LinkedHashMap<>();
         mTimer = new SmartTimer(logger);
 
         String status = "";
@@ -94,6 +98,8 @@ public class IntakeElbow {
 
     }
 
+    // Make the servo reach current position. A timer is armed, and the servo won't respond until it is unarmed.
+    // By the time, the servo should have reached its target position
     public void setPosition(Position position) {
 
         if( mPositions.containsKey(position) && mReady && !this.isMoving()) {
@@ -103,12 +109,14 @@ public class IntakeElbow {
         }
     }
 
+    // Switch between the different positions of the arm, in the direction of the transfer position
     public void moveUp() {
         if(mPosition == Position.GRABBING)              { this.setPosition(Position.LOOKING);          }
         else if(mPosition == Position.LOOKING)          { this.setPosition(Position.OVER_SUBMERSIBLE); }
         else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setPosition(Position.TRANSFER);         }
     }
 
+    // Switch between the different positions of the arm, in the direction of the grabbing position
     public void moveDown() {
         if(mPosition == Position.LOOKING)               { this.setPosition(Position.GRABBING);         }
         else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setPosition(Position.LOOKING);          }

@@ -43,7 +43,7 @@ public class IntakeSlides {
     boolean                 mReady;       // True if component is able to fulfil its mission
     SmartTimer              mTimer;       // Timer for timeout management
 
-    Position                mPosition;    // Current slide position (unknown if movimg freely
+    Position                mPosition;    // Current slide position (unknown if movimg freely)
 
     MotorComponent          mMotor;       // Motors (coupled if specified by the configuration) driving the slides
 
@@ -101,6 +101,7 @@ public class IntakeSlides {
 
     }
 
+    // Extends the slides with a given power
     public void extend(double Power)   {
 
         if(mReady && !this.isMoving())
@@ -119,12 +120,14 @@ public class IntakeSlides {
 
     }
 
+    // Stop slides
     public void stop() {
         if(mReady && !this.isMoving()) {
             mMotor.setPower(0);
         }
     }
 
+    // Rollback slides with a given power
     public void rollback(double Power) {
         if(mReady && !this.isMoving()) {
             mMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -141,6 +144,8 @@ public class IntakeSlides {
 
     }
 
+    // Make the slides reach current position. The slides won't respond anymore until slides reached the position
+    // A timer is armed fpr time out, and the slides will respond again once unarmed
     public void setPosition(Position position)
     {
         if(mReady && !this.isMoving() && mPositions.containsKey(position)) {
@@ -155,6 +160,7 @@ public class IntakeSlides {
         }
     }
 
+    // Logging function
     public String logPositions()
     {
         return "POS IN SLD : " + mMotor.logPositions();

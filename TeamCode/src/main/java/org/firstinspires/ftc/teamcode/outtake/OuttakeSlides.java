@@ -64,8 +64,10 @@ public class OuttakeSlides {
     //TouchSensor            mTouchSensorRight;
     //TouchSensor            mTouchSensorLeft;
 
+    // Check if the component is currently moving on command
     public boolean isMoving() { return (mMotor.isBusy() && mTimer.isArmed());}
 
+    // Initialize component from configuration
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
@@ -113,6 +115,7 @@ public class OuttakeSlides {
 
     }
 
+    // Extends the slides with a given power
     public void extend(double Power)   {
         if(mReady && !this.isMoving()) {
 
@@ -132,12 +135,14 @@ public class OuttakeSlides {
 
     }
 
+    // Stop slides
     public void stop() {
         if(mReady && !this.isMoving()) {
             mMotor.setPower(0);
         }
     }
 
+    // Rollback slides with a given power
     public void rollback(double Power) {
         if(mReady && !this.isMoving()) {
 
@@ -154,11 +159,8 @@ public class OuttakeSlides {
         }
     }
 
-    public String logPositions()
-    {
-        return "POS OUT SLD : " + mMotor.logPositions();
-    }
-
+    // Make the slides reach current position. The slides won't respond anymore until slides reached the position
+    // A timer is armed fpr time out, and the slides will respond again once unarmed
     public void setPosition(Position position)
     {
         if(mReady && !this.isMoving() && mPositions.containsKey(position)) {
@@ -171,6 +173,12 @@ public class OuttakeSlides {
             mPosition = position;
 
         }
+    }
+
+    // Logging function
+    public String logPositions()
+    {
+        return "POS OUT SLD : " + mMotor.logPositions();
     }
 
 

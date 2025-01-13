@@ -50,23 +50,25 @@ public class OuttakeWrist {
             "5", Position.FIVE,
             "6", Position.SIX
     );
-    private static int sTimeOut = 100;
+    private static int    sTimeOut = 100; // Timeout in ms
 
-    public static final double sIncrementRatio = 0.01;
 
-    Telemetry             mLogger;
+    Telemetry             mLogger;      // Local logger
 
-    boolean               mReady;
-    SmartTimer            mTimer;
-    Position              mPosition;
+    boolean               mReady;       // True if component is able to fulfil its mission
+    SmartTimer            mTimer;       // Timer for timeout management
+    Position              mPosition;    // Current wrist position
 
-    ServoComponent        mServo;
-    Map<Position, Double> mPositions;
+    ServoComponent        mServo;       // Servos (coupled if specified by the configuration) driving the wrist
+    Map<Position, Double> mPositions;   // Link between positions enumerated and servos positions
 
+    // Return current reference position
     public Position getPosition() { return mPosition; }
 
+    // Check if the component is currently moving on command
     public boolean isMoving() { return mTimer.isArmed();}
 
+    // Initialize component from configuration
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
@@ -106,6 +108,8 @@ public class OuttakeWrist {
         this.setPosition(Position.NULL);
     }
 
+    // Make the servo reach current position. A timer is armed, and the servo won't respond until it is unarmed.
+    // By the time, the servo should have reached its target position
     public void setPosition(Position position) {
 
         if( mPositions.containsKey(position) && mReady && !this.isMoving()) {
@@ -116,6 +120,7 @@ public class OuttakeWrist {
         }
     }
 
+    // Make the wrist rotate one step in one direction
     public void rotateUp() {
         if(mPosition      == Position.MINUS_TWO)    { this.setPosition(Position.MINUS_ONE); }
         else if(mPosition == Position.MINUS_ONE)    { this.setPosition(Position.NULL);      }
@@ -127,6 +132,7 @@ public class OuttakeWrist {
         else if(mPosition == Position.FIVE)         { this.setPosition(Position.SIX);       }
     }
 
+    // Make the wrist rotate one step in the other direction
     public void rotateDown() {
         if(mPosition      == Position.MINUS_ONE)    { this.setPosition(Position.MINUS_TWO);  }
         else if(mPosition == Position.NULL)         { this.setPosition(Position.MINUS_ONE);  }
