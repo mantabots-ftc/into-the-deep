@@ -106,11 +106,11 @@ public class Collecting {
 
         if (gamepad.left_bumper)       {
             logger.addLine("==> EXT OUT SLD");
-            outtakeSlides.extend(1.0);
+            outtakeSlides.extend(0.1);
         }
         else if (gamepad.right_bumper) {
             logger.addLine("==> RLB OUT SLD");
-            outtakeSlides.rollback(1.0);
+            outtakeSlides.rollback(0.1);
         }
         else                            {
             outtakeSlides.stop();
@@ -118,16 +118,15 @@ public class Collecting {
 
         if(gamepad.right_stick_button) {
             outtakeSlides.setPosition(OuttakeSlides.Position.TRANSFER );
-            logger.addData("coucou",0);
         }
 
         if(gamepad.left_trigger > 0 )                {
             logger.addLine("==> EXT IN SLD");
-            intakeSlides.extend(gamepad.left_trigger);
+            intakeSlides.extend(gamepad.left_trigger * 0.3);
         }
         else if (gamepad.right_trigger > 0)          {
             logger.addLine("==> RLB IN SLD");
-            intakeSlides.rollback(gamepad.right_trigger);
+            intakeSlides.rollback(gamepad.right_trigger * 0.3);
         }
         else                                         {
             intakeSlides.stop();
@@ -233,29 +232,29 @@ public class Collecting {
 
         outtakeClaw.setPosition(OuttakeClaw.Position.OPEN);
         outtakeWrist.setPosition(OuttakeWrist.Position.NULL);
-        outtakeSlides.setPosition(OuttakeSlides.Position.TRANSFER);
-        intakeWrist.setPosition(IntakeWrist.Position.NULL );
-        intakeElbow.setPosition(IntakeElbow.Position.TRANSFER );
-        intakeArm.setPosition(IntakeArm.Position.TRANSFER ) ;
-        intakeSlides.setPosition(IntakeSlides.Position.TRANSFER);
-        intakeClaw.setPosition(IntakeClaw.Position.MICRORELEASED);
-        outtakeClaw.setPosition(OuttakeClaw.Position.CLOSED);
-        intakeClaw.setPosition(IntakeClaw.Position.OPEN);
-        outtakeElbow.setPosition(OuttakeElbow.Position.DROP);
+        //outtakeSlides.setPosition(OuttakeSlides.Position.TRANSFER);
+        //intakeWrist.setPosition(IntakeWrist.Position.NULL );
+        //intakeElbow.setPosition(IntakeElbow.Position.TRANSFER );
+        //intakeArm.setPosition(IntakeArm.Position.TRANSFER ) ;
+        //intakeSlides.setPosition(IntakeSlides.Position.TRANSFER);
+        //intakeClaw.setPosition(IntakeClaw.Position.MICRORELEASED);
+        //outtakeClaw.setPosition(OuttakeClaw.Position.CLOSED);
+        //intakeClaw.setPosition(IntakeClaw.Position.OPEN);
+        //outtakeElbow.setPosition(OuttakeElbow.Position.DROP);
 
     }
 
     public void retract (){
-        intakeSlides.setPosition(IntakeSlides.Position.TRANSFER );
-        intakeClaw.setPosition(IntakeClaw.Position.CLOSED );
-        intakeWrist.setPosition(IntakeWrist.Position.NULL );
-        intakeElbow.setPosition(IntakeElbow.Position.OFF );
-        intakeArm.setPosition(IntakeArm.Position.OFF );
-        outtakeClaw.setPosition(OuttakeClaw.Position.CLOSED );
-        outtakeWrist.setPosition(OuttakeWrist.Position.NULL  );
-        outtakeElbow.setPosition(OuttakeElbow.Position.OFF );
-        outtakeSlides.setPosition(OuttakeSlides.Position.MIN );
-        intakeSlides.setPosition(IntakeSlides.Position.MIN );
+        //intakeSlides.setPosition(IntakeSlides.Position.TRANSFER );
+        //intakeClaw.setPosition(IntakeClaw.Position.CLOSED );
+//        //intakeWrist.setPosition(IntakeWrist.Position.NULL );
+//        intakeElbow.setPosition(IntakeElbow.Position.OFF );
+//        intakeArm.setPosition(IntakeArm.Position.OFF );
+//        outtakeClaw.setPosition(OuttakeClaw.Position.CLOSED );
+//        outtakeWrist.setPosition(OuttakeWrist.Position.NULL  );
+//        outtakeElbow.setPosition(OuttakeElbow.Position.OFF );
+//        outtakeSlides.setPosition(OuttakeSlides.Position.MIN );
+//        intakeSlides.setPosition(IntakeSlides.Position.MIN );
 
 
     }

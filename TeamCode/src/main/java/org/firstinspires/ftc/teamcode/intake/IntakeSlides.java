@@ -181,7 +181,7 @@ public class IntakeSlides {
                 mLogger.addLine("" + mMotorRight.getCurrentPosition());
                 mLogger.addLine("" + mMotorRight.getTargetPosition());
                 mLogger.update();
-                mMotorRight.setPower(0.1);
+                mMotorRight.setPower(0.5);
                 //mMotorLeft.setPower(0.1);
             }
 

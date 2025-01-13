@@ -81,7 +81,7 @@ public class IntakeElbow {
         else        { logger.addLine("==>  IN ELB : KO : " + status); }
 
         // Initialize position
-        this.setPosition(Position.TRANSFER);
+        this.setPosition(Position.GRABBING);
 
     }
 

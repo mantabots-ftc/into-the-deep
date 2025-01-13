@@ -79,7 +79,7 @@ public class OuttakeElbow {
         else        { logger.addLine("==>  OUT ELB : KO : " + status); }
 
         // Initialize position
-        //this.setPosition(Position.TRANSFER);
+        this.setPosition(Position.OFF);
 
     }
 

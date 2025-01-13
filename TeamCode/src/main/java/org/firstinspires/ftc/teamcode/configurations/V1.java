@@ -24,7 +24,7 @@ public class V1 extends Configuration {
         mImus.put("otos", new ConfImu("sensor_otos"));                                     // EH I2C 3
 
         /* Intake configuration */
-        mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",true));         // EH Motor 3
+        mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",false, true));         // EH Motor 3
         mMotors.put("intake-slides-right",new ConfMotor("intakeSlidesRight",true));        // EH Motor 2
         mMotors.get("intake-slides-left").addPosition("min",0 );
         mMotors.get("intake-slides-right").addPosition("min",0 );
@@ -41,8 +41,8 @@ public class V1 extends Configuration {
         mServos.put("intake-claw", new ConfServo("intakeClaw", false));                      // EH Servo 2     CSIn
 
         /* Outtake configuration */
-        mMotors.put("outtake-slides-left",new ConfMotor("outtakeSlidesLeft",false,true));         // EH Motor 0
-        mMotors.put("outtake-slides-right",new ConfMotor("outtakeSlidesRight",true,true));        // EH Motor 1
+        mMotors.put("outtake-slides-left",new ConfMotor("outtakeSlidesLeft",true));         // EH Motor 0
+        mMotors.put("outtake-slides-right",new ConfMotor("outtakeSlidesRight",false));        // EH Motor 1
         mMotors.get("outtake-slides-left").addPosition("min",0 );
         mMotors.get("outtake-slides-right").addPosition("min",0 );
         mMotors.get("outtake-slides-left").addPosition("transfer",0 );
@@ -72,14 +72,14 @@ public class V1 extends Configuration {
         mServos.get("intake-arm-pitch").addPosition("overSub", 0.55);
         mServos.get("intake-arm-pitch").addPosition("look", 0.44);
         mServos.get("intake-arm-pitch").addPosition("grab", 0.39);
-        mServos.get("intake-arm-pitch").addPosition("off", 0.97);
+        mServos.get("intake-arm-pitch").addPosition("off", 1.0);
 
 
         mServos.get("intake-elbow-pitch").addPosition("transfer", 0.15);
         mServos.get("intake-elbow-pitch").addPosition("grab", 0.68);
         mServos.get("intake-elbow-pitch").addPosition("look", 0.70);
         mServos.get("intake-elbow-pitch").addPosition("overSub", 0.73);
-        mServos.get("intake-elbow-pitch").addPosition("off", 0.15);
+        mServos.get("intake-elbow-pitch").addPosition("off", 0.05);
 
         mServos.get("intake-wrist-roll").addPosition("-2", 0.27);
         mServos.get("intake-wrist-roll").addPosition("-1", 0.335);
