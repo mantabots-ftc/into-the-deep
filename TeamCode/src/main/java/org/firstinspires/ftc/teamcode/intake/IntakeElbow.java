@@ -6,7 +6,6 @@ import java.util.Map;
 
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,6 +19,9 @@ import org.firstinspires.ftc.teamcode.components.ServoComponent;
 import org.firstinspires.ftc.teamcode.components.ServoMock;
 import org.firstinspires.ftc.teamcode.components.ServoCoupled;
 import org.firstinspires.ftc.teamcode.components.ServoSingle;
+
+/* Utils includes */
+import org.firstinspires.ftc.teamcode.utils.SmartTimer;
 
 public class IntakeElbow {
 
@@ -39,13 +41,12 @@ public class IntakeElbow {
             "off",  Position.OFF
     );
 
-    private static int WAITING_TIME = 100;
+    private static int sTimeOut = 100;
 
     Telemetry               mLogger;
 
     boolean                 mReady;
-    boolean                 mIsFirstCall;
-    ElapsedTime             mTimer;
+    SmartTimer              mTimer;
 
     Position                mPosition;
     ServoComponent          mServo;
@@ -53,14 +54,13 @@ public class IntakeElbow {
 
     public Position getPosition() { return mPosition; }
 
-    public boolean isMoving() { return (mTimer.milliseconds() < WAITING_TIME);}
+    public boolean isMoving() { return mTimer.isArmed();}
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
         mReady = true;
-        mIsFirstCall = true;
-        mTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+        mTimer = new SmartTimer(logger);
 
         String status = "";
 
@@ -98,8 +98,7 @@ public class IntakeElbow {
 
         if( mPositions.containsKey(position) && mReady && !this.isMoving()) {
             mServo.setPosition(mPositions.get(position));
-            mTimer.reset();
-            mIsFirstCall = false;
+            mTimer.arm(sTimeOut);
             mPosition = position;
         }
     }

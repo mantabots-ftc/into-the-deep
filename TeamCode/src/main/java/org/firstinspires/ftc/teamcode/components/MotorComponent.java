@@ -39,4 +39,6 @@ public abstract class MotorComponent {
     public abstract void	                    setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior);
     public abstract void                        setPower(double power);
 
+    public abstract String                      logPositions();
+
 }

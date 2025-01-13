@@ -6,7 +6,6 @@ import java.util.Map;
 
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,7 +19,9 @@ import org.firstinspires.ftc.teamcode.components.ServoComponent;
 import org.firstinspires.ftc.teamcode.components.ServoMock;
 import org.firstinspires.ftc.teamcode.components.ServoCoupled;
 import org.firstinspires.ftc.teamcode.components.ServoSingle;
-import org.firstinspires.ftc.teamcode.intake.IntakeClaw;
+
+/* Utils includes */
+import org.firstinspires.ftc.teamcode.utils.SmartTimer;
 
 public class OuttakeClaw {
 
@@ -35,26 +36,28 @@ public class OuttakeClaw {
             "microrelease", Position.MICRORELEASED,
             "closed",       Position.CLOSED
     );
-    private static int WAITING_TIME = 100;
+
+    private static int sTimeOut = 100;
 
     Telemetry             mLogger;
 
     boolean               mReady;
-    ElapsedTime           mTimer;
+    SmartTimer            mTimer;
 
     Position              mPosition;
     ServoComponent        mServo;
-    Map<Position, Double> mPositions = new LinkedHashMap<>();
+    Map<Position, Double> mPositions;
 
     public Position getPosition() { return mPosition; }
 
-    public boolean isMoving() { return (mTimer.milliseconds() < WAITING_TIME);}
+    public boolean isMoving() { return mTimer.isArmed();}
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
         mReady = true;
-        mTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+        mTimer = new SmartTimer(mLogger);
+        mPositions = new LinkedHashMap<>();
 
         String status = "";
 
@@ -93,7 +96,7 @@ public class OuttakeClaw {
         if( mPositions.containsKey(position) && mReady && !this.isMoving()) {
             mServo.setPosition(mPositions.get(position));
             mPosition = position;
-            mTimer.reset();
+            mTimer.arm(sTimeOut);
         }
 
     }

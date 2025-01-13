@@ -57,6 +57,9 @@ public class MotorMock extends MotorComponent {
     public DcMotor.ZeroPowerBehavior	getZeroPowerBehavior() { return mBehavior; }
 
     @Override
+    public String                       logPositions() { return "" + this.getCurrentPosition(); }
+
+    @Override
     public double                   	getPower() { return mPower; }
 
     @Override

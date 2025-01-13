@@ -9,7 +9,6 @@ import java.util.Map;
 
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,7 +22,9 @@ import org.firstinspires.ftc.teamcode.components.ServoComponent;
 import org.firstinspires.ftc.teamcode.components.ServoMock;
 import org.firstinspires.ftc.teamcode.components.ServoCoupled;
 import org.firstinspires.ftc.teamcode.components.ServoSingle;
-import org.firstinspires.ftc.teamcode.intake.IntakeWrist;
+
+/* Utils includes */
+import org.firstinspires.ftc.teamcode.utils.SmartTimer;
 
 public class OuttakeWrist {
 
@@ -49,29 +50,30 @@ public class OuttakeWrist {
             "5", Position.FIVE,
             "6", Position.SIX
     );
-    private static int WAITING_TIME = 100;
+    private static int sTimeOut = 100;
 
     public static final double sIncrementRatio = 0.01;
 
     Telemetry             mLogger;
 
     boolean               mReady;
-    ElapsedTime           mTimer;
-
+    SmartTimer            mTimer;
     Position              mPosition;
-    double                mDeltaPosition = 0;
+
     ServoComponent        mServo;
-    Map<Position, Double> mPositions = new LinkedHashMap<>();
+    Map<Position, Double> mPositions;
 
     public Position getPosition() { return mPosition; }
 
-    public boolean isMoving() { return (mTimer.milliseconds() < WAITING_TIME);}
+    public boolean isMoving() { return mTimer.isArmed();}
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
         mReady = true;
-        mTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+
+        mTimer = new SmartTimer(mLogger);
+        mPositions = new LinkedHashMap<>();
 
         String status = "";
 
@@ -110,8 +112,7 @@ public class OuttakeWrist {
             mLogger.addLine(" ==> OUT WRS POS : " + mPositions.get(position));
             mServo.setPosition(mPositions.get(position));
             mPosition = position;
-            mTimer.reset();
-            mDeltaPosition = 0;
+            mTimer.arm(sTimeOut);
         }
     }
 

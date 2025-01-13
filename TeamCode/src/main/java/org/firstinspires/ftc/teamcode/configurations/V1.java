@@ -24,14 +24,9 @@ public class V1 extends Configuration {
         mImus.put("otos", new ConfImu("sensor_otos"));                                     // EH I2C 3
 
         /* Intake configuration */
-        mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",false, false));         // EH Motor 3
-        mMotors.put("intake-slides-right",new ConfMotor("intakeSlidesRight",true));        // EH Motor 2
-        mMotors.get("intake-slides-left").addPosition("min",0 );
-        mMotors.get("intake-slides-right").addPosition("min",0 );
-        mMotors.get("intake-slides-left").addPosition("transfer",175 );
-        mMotors.get("intake-slides-right").addPosition("transfer",177 );
-        mMotors.get("intake-slides-left").addPosition("max",358 );
-        mMotors.get("intake-slides-right").addPosition("max",357 );
+        mMotors.put("intake-slides",new ConfMotor(
+                "intakeSlidesLeft",false, false,                             // EH Motor 3
+                "intakeSlidesRight",true, false));                                  // EH Motor 2
         mServos.put("intake-arm-pitch", new ConfServo(
                 "intakeArmPitchLeft", false,                                                  // CH Servo 5     4bSPL
                 "intakeArmPitchRight", true                                                                      // EH Servo 1     4bSPR
@@ -41,22 +36,16 @@ public class V1 extends Configuration {
         mServos.put("intake-claw", new ConfServo("intakeClaw", false));                      // EH Servo 2     CSIn
 
         /* Outtake configuration */
-        mMotors.put("outtake-slides-left",new ConfMotor("outtakeSlidesLeft",true));         // EH Motor 0
-        mMotors.put("outtake-slides-right",new ConfMotor("outtakeSlidesRight",false));        // EH Motor 1
-        mMotors.get("outtake-slides-left").addPosition("min",0 );
-        mMotors.get("outtake-slides-right").addPosition("min",0 );
-        mMotors.get("outtake-slides-left").addPosition("transfer",0 );
-        mMotors.get("outtake-slides-right").addPosition("transfer",0 );
-        mMotors.get("outtake-slides-left").addPosition("max",4156 );
-        mMotors.get("outtake-slides-right").addPosition("max",4156 );
-        mMotors.get("outtake-slides-left").addPosition("highBasket",10 );
-        mMotors.get("outtake-slides-right").addPosition("highBasket",10 );
-        mMotors.get("outtake-slides-left").addPosition("lowBasket",10 );
-        mMotors.get("outtake-slides-right").addPosition("lowBasket",10 );
-        mMotors.get("outtake-slides-left").addPosition("lowSubmersible",10 );
-        mMotors.get("outtake-slides-right").addPosition("lowSubmersible",10 );
-        mMotors.get("outtake-slides-left").addPosition("highSubmersible",10 );
-        mMotors.get("outtake-slides-right").addPosition("highSubmersible",10 );
+        mMotors.put("outtake-slides-left",new ConfMotor(
+                "outtakeSlidesLeft",true, false,                               // EH Motor 0
+                       "outtakeSlidesRight",false, false));                           // EH Motor 1
+        mMotors.get("outtake-slides").addPosition("min",0 );
+        mMotors.get("outtake-slides").addPosition("transfer",0 );
+        mMotors.get("outtake-slides").addPosition("max",4156 );
+        mMotors.get("outtake-slides").addPosition("highBasket",10 );
+        mMotors.get("outtake-slides").addPosition("lowBasket",10 );
+        mMotors.get("outtake-slides").addPosition("lowSubmersible",10 );
+        mMotors.get("outtake-slides").addPosition("highSubmersible",10 );
 
 
         mServos.put("outtake-wrist-roll", new ConfServo("outtakeWristRoll", false));         // CH Servo 0     CSRoOut

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.intake;
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -17,96 +16,84 @@ import org.firstinspires.ftc.teamcode.components.MotorComponent;
 import org.firstinspires.ftc.teamcode.components.MotorMock;
 import org.firstinspires.ftc.teamcode.components.MotorCoupled;
 import org.firstinspires.ftc.teamcode.components.MotorSingle;
-import org.firstinspires.ftc.teamcode.outtake.OuttakeSlides;
+import org.firstinspires.ftc.teamcode.utils.SmartTimer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class IntakeSlides {
+
     public enum Position {
         MIN,
         TRANSFER,
         MAX,
         UNKNOWN
     };
+
     private static final Map<String, Position> sConfToPosition = Map.of(
             "min",  Position.MIN,
             "transfer", Position.TRANSFER,
             "max", Position.MAX
     );
-    Telemetry            mLogger;
 
-    boolean              mReady;
-    ElapsedTime          mTimer;
+    private static int sTimeOut = 5000; // Timeout in ms
 
-    Position             mPosition;
+    Telemetry               mLogger;      // Local logger
 
-    MotorComponent       mMotorRight;
-    MotorComponent       mMotorLeft;
+    boolean                 mReady;       // True if component is able to fulfil its mission
+    SmartTimer              mTimer;       // Timer for timeout management
 
-    Map<Position, Integer> mPositionsLeft = new LinkedHashMap<>();
-    Map<Position, Integer> mPositionsRight = new LinkedHashMap<>();
-    
-    public boolean isBusy() { return (mMotorRight.isBusy() || mMotorLeft.isBusy());}
+    Position                mPosition;    // Current slide position (unknown if movimg freely
+
+    MotorComponent          mMotor;       // Motors (coupled if specified by the configuration) driving the slides
+
+    Map<Position, Integer>  mPositions;    // Link between positions enumerated and encoder positions
 
 
+    // Check if the component is currently moving on command
+    public boolean isMoving() { return (mMotor.isBusy() && mTimer.isArmed()); }
+
+    // Initialize component from configuration
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
         mReady = true;
+
+        mPositions = new LinkedHashMap<>();
+        mTimer = new SmartTimer(mLogger);
+
         String status = "";
 
-        ConfMotor slides = config.getMotor("intake-slides-left");
+        ConfMotor slides = config.getMotor("intake-slides");
         if(slides == null)  { mReady = false; status += " CONF";}
         else {
 
-            // Configure motor
-            if (slides.shallMock()) { mMotorLeft = new MotorMock("intake-slides-left"); }
-            else if (slides.getHw().size() == 1) { mMotorLeft = new MotorSingle(slides, hwm, "intake-slides-left", logger); }
-            else if (slides.getHw().size() == 2) { mMotorLeft = new MotorCoupled(slides, hwm, "intake-slides-left", logger); }
+            // Build motor based on configuratioh
+            if (slides.shallMock()) { mMotor = new MotorMock("intake-slides"); }
+            else if (slides.getHw().size() == 1) { mMotor = new MotorSingle(slides, hwm, "intake-slides", logger); }
+            else if (slides.getHw().size() == 2) { mMotor = new MotorCoupled(slides, hwm, "intake-slides", logger); }
 
-            if (!mMotorLeft.isReady()) { mReady = false; status += " HW";}
+            if (!mMotor.isReady()) { mReady = false; status += " HW";}
             else {
-                mMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                mPositionsLeft.clear();
+                // Initialize motor
+                mMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                mMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                // Store encoder positions
+                mPositions.clear();
                 Map<String, Integer> confPosition = slides.getPositions();
                 for (Map.Entry<String, Integer> pos : confPosition.entrySet()) {
                     if(sConfToPosition.containsKey(pos.getKey())) {
-                        mPositionsLeft.put(sConfToPosition.get(pos.getKey()), pos.getValue());
+                        mPositions.put(sConfToPosition.get(pos.getKey()), pos.getValue());
                     }
                 }
 
             }
         }
 
-        slides = config.getMotor("intake-slides-right");
-        if(slides == null)  { mReady = false; status += " CONF";}
-        else {
-
-            // Configure motor
-            if (slides.shallMock()) { mMotorRight = new MotorMock("intake-slides-right"); }
-            else if (slides.getHw().size() == 1) { mMotorRight = new MotorSingle(slides, hwm, "intake-slides-right", logger); }
-            else if (slides.getHw().size() == 2) { mMotorRight = new MotorCoupled(slides, hwm, "intake-slides-right", logger); }
-
-            if (!mMotorRight.isReady()) { mReady = false; status += " HW";}
-            else {
-                mMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                mPositionsRight.clear();
-                Map<String, Integer> confPosition = slides.getPositions() ;
-                for (Map.Entry<String, Integer> pos : confPosition.entrySet()) {
-                    if(sConfToPosition.containsKey(pos.getKey())) {
-                        mPositionsRight.put(sConfToPosition.get(pos.getKey()), pos.getValue());
-                    }
-                }
-                }
-        }
-
-        if (!mPositionsLeft.containsKey(Position.MIN)) { mReady = false; }
-        if (!mPositionsRight.containsKey(Position.MIN)) { mReady = false; }
-        if (!mPositionsRight.containsKey(Position.MAX)) { mReady = false; }
-        if (!mPositionsLeft.containsKey(Position.MAX)) { mReady = false; }
+        // Final check to assess the component readiness
+        if (!mPositions.containsKey(Position.MIN)) { mReady = false; }
+        if (!mPositions.containsKey(Position.MAX)) { mReady = false; }
 
         // Log status
         if (mReady) { logger.addLine("==>  IN SLD : OK"); }
@@ -115,23 +102,17 @@ public class IntakeSlides {
     }
 
     public void extend(double Power)   {
-        if(mReady && !this.isBusy())
+
+        if(mReady && !this.isMoving())
         {
-            mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mPosition = Position.UNKNOWN;
 
-            boolean shall_work = (
-                    (mMotorLeft.getCurrentPosition() < mPositionsLeft.get(Position.MAX)) &&
-                    (mMotorRight.getCurrentPosition() < mPositionsRight.get(Position.MAX)));
-
-            if(shall_work){
-                mMotorLeft.setPower(Power);
-                mMotorRight.setPower(Power);
+            if(mMotor.getCurrentPosition() < mPositions.get(Position.MAX)){
+                mMotor.setPower(Power);
             }
-            if(!shall_work) {
-                mMotorRight.setPower(0);
-                mMotorLeft.setPower(0);
+            else {
+                mMotor.setPower(0);
             }
 
         }
@@ -139,29 +120,21 @@ public class IntakeSlides {
     }
 
     public void stop() {
-        if(mReady && !this.isBusy()) {
-            mMotorRight.setPower(0);
-            mMotorLeft.setPower(0);
+        if(mReady && !this.isMoving()) {
+            mMotor.setPower(0);
         }
     }
 
     public void rollback(double Power) {
-        if(mReady && !this.isBusy()) {
-            mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if(mReady && !this.isMoving()) {
+            mMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mPosition = Position.UNKNOWN;
 
-            boolean shall_work = (
-                    (mMotorLeft.getCurrentPosition() > mPositionsLeft.get(Position.MIN)) &&
-                    (mMotorRight.getCurrentPosition() > mPositionsLeft.get(Position.MIN)));
-
-            if(shall_work){
-                mMotorLeft.setPower(-Power);
-                mMotorRight.setPower(-Power);
+            if(mMotor.getCurrentPosition() > mPositions.get(Position.MIN)){
+                mMotor.setPower(-Power);
             }
-            if(!shall_work) {
-                mMotorRight.setPower(0);
-                mMotorLeft.setPower(0);
+            else {
+                mMotor.setPower(0);
             }
 
         }
@@ -170,29 +143,21 @@ public class IntakeSlides {
 
     public void setPosition(Position position)
     {
-        if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
-            mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
-            mMotorRight.setTargetPosition(mPositionsRight.get(position));
+        if(mReady && !this.isMoving() && mPositions.containsKey(position)) {
 
-            mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
-            mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
+            mMotor.setTargetPosition(mPositions.get(position));
+            mMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mMotor.setPower(0.35);
+            mTimer.arm(sTimeOut);
 
-            while(mMotorRight.isBusy() || mMotorLeft.isBusy()) {
-                mLogger.addLine("" + mMotorLeft.getCurrentPosition());
-                mLogger.addLine("" + mMotorLeft.getTargetPosition());
-                mLogger.addLine("" + mMotorRight.getCurrentPosition());
-                mLogger.addLine("" + mMotorRight.getTargetPosition());
-                mLogger.update();
-                mMotorRight.setPower(0.35);
-                mMotorLeft.setPower(0.35);
-            }
             mPosition = position;
+
         }
     }
 
-    public String getPositions()
+    public String logPositions()
     {
-        return "POS IN SLD L : " + mMotorLeft.getCurrentPosition() + " R : " + mMotorRight.getCurrentPosition();
+        return "POS IN SLD : " + mMotor.logPositions();
     }
 
 }

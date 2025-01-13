@@ -15,7 +15,9 @@ public class ConfServo {
 
     private       boolean                mShallMock   = false;
 
+
     private final Map<String, Boolean>   mHw          = new LinkedHashMap<>();
+    // Reference servo positions for the given servo (or servo couple)
     private final Map<String, Double>    mPositions   = new LinkedHashMap<>();
 
     public ConfServo(String Name, boolean ShallReverse)

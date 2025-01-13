@@ -70,6 +70,16 @@ public class MotorSingle extends MotorComponent {
     }
 
     @Override
+    public String                      logPositions()
+    {
+        String result = "";
+        if(mReady) {
+            result += mMotor.getCurrentPosition();
+        }
+        return result;
+    }
+
+    @Override
     public int	                        getCurrentPosition()
     {
         int result = -1;

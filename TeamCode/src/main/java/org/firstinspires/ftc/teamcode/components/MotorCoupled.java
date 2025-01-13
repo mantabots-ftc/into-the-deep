@@ -85,6 +85,16 @@ public class MotorCoupled extends MotorComponent {
     }
 
     @Override
+    public String                      logPositions()
+    {
+        String result = "";
+        if(mReady) {
+            result += "First : " + mFirst.getCurrentPosition() + " Second : " + mSecond.getCurrentPosition();
+        }
+        return result;
+    }
+
+    @Override
     public int	                        getCurrentPosition()
     {
         int result = -1;

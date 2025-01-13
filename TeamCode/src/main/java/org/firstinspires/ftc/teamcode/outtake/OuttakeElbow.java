@@ -6,7 +6,6 @@ import java.util.Map;
 
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,7 +19,9 @@ import org.firstinspires.ftc.teamcode.components.ServoComponent;
 import org.firstinspires.ftc.teamcode.components.ServoMock;
 import org.firstinspires.ftc.teamcode.components.ServoCoupled;
 import org.firstinspires.ftc.teamcode.components.ServoSingle;
-import org.firstinspires.ftc.teamcode.intake.IntakeElbow;
+
+/* Utils includes */
+import org.firstinspires.ftc.teamcode.utils.SmartTimer;
 
 public class OuttakeElbow {
 
@@ -30,25 +31,24 @@ public class OuttakeElbow {
         OFF
     };
 
-    private static int WAITING_TIME = 100;
-
     private static final Map<String, Position> sConfToPosition = Map.of(
             "transfer", Position.TRANSFER,
             "drop",Position.DROP,
             "off",Position.OFF
-
     );
+
+    private static int sTimeOut = 100;
 
     Telemetry               mLogger;
 
     boolean                 mReady;
-    ElapsedTime             mTimer;
+    SmartTimer              mTimer;
 
     Position                mPosition;
     ServoComponent          mServo;
     Map<Position, Double>   mPositions   = new LinkedHashMap<>();
 
-    public boolean isMoving() { return (mTimer.milliseconds() < WAITING_TIME);}
+    public boolean isMoving() { return mTimer.isArmed();}
 
     public Position getPosition() { return mPosition; }
 
@@ -56,7 +56,7 @@ public class OuttakeElbow {
 
         mLogger = logger;
         mReady = true;
-        mTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+        mTimer = new SmartTimer(mLogger);
 
         String status = "";
 
@@ -95,17 +95,17 @@ public class OuttakeElbow {
         if( mPositions.containsKey(position) && mReady && !this.isMoving()) {
             mServo.setPosition(mPositions.get(position));
             mPosition = position;
-            mTimer.reset();
+            mTimer.arm(sTimeOut);
         }
     }
 
     public void moveUp() {
         if(mPosition == Position.OFF)              { this.setPosition(Position.TRANSFER);          }
-        else if(mPosition == Position.TRANSFER)          { this.setPosition(Position.DROP); }
+        else if(mPosition == Position.TRANSFER)    { this.setPosition(Position.DROP); }
     }
 
     public void moveDown() {
-        if(mPosition == Position.DROP)               { this.setPosition(Position.TRANSFER);         }
+        if(mPosition == Position.DROP)          { this.setPosition(Position.TRANSFER);         }
         else if(mPosition == Position.TRANSFER) { this.setPosition(Position.OFF);          }
     }
 }

@@ -12,15 +12,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 abstract public class Configuration {
+
     // Map to store hardware components by reference name
     protected final  Map<String, ConfMotor> mMotors = new LinkedHashMap<>();
     protected final  Map<String, ConfImu>   mImus   = new LinkedHashMap<>();
     protected final  Map<String, ConfServo> mServos = new LinkedHashMap<>();
 
-    // FOR TUNING ONLY !!!
+    // FOR TUNING ONLY !!! NO COUPLED SERVOS HERE
     protected final Map<String, ConfServo> mSingleServos = new LinkedHashMap<>();
 
-    public static Configuration s_Current = new V1() ;
+    // Current selected configuration
+    public static Configuration s_Current = new Test2() ;
 
     // Method to retrieve a motor by its reference name
     public ConfMotor getMotor(String name) {
@@ -40,6 +42,7 @@ abstract public class Configuration {
         else                           { return null;            }
     }
 
+    // Method to retrieve all servos uncoupled for tuning
     public Map<String, ConfServo>   getForTuning() { return mSingleServos; }
 
     // Method to retrieve a servo by its reference name
