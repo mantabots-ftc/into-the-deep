@@ -89,8 +89,6 @@ public class ServoPairTest extends LinearOpMode {
         }
 
         if(master != null && slave != null) {
-            posSlave = slave.getPosition();
-            posMaster = master.getPosition();
 
             if (mode == Mode.MASTER_ONLY) {
                 mode = Mode.SLAVE_ONLY;

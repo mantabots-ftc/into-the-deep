@@ -24,7 +24,7 @@ public class V1 extends Configuration {
         mImus.put("otos", new ConfImu("sensor_otos"));                                     // EH I2C 3
 
         /* Intake configuration */
-        mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",false, true));         // EH Motor 3
+        mMotors.put("intake-slides-left",new ConfMotor("intakeSlidesLeft",false, false));         // EH Motor 3
         mMotors.put("intake-slides-right",new ConfMotor("intakeSlidesRight",true));        // EH Motor 2
         mMotors.get("intake-slides-left").addPosition("min",0 );
         mMotors.get("intake-slides-right").addPosition("min",0 );
@@ -79,7 +79,7 @@ public class V1 extends Configuration {
         mServos.get("intake-elbow-pitch").addPosition("grab", 0.68);
         mServos.get("intake-elbow-pitch").addPosition("look", 0.70);
         mServos.get("intake-elbow-pitch").addPosition("overSub", 0.73);
-        mServos.get("intake-elbow-pitch").addPosition("off", 0.05);
+        mServos.get("intake-elbow-pitch").addPosition("off", 0.68);
 
         mServos.get("intake-wrist-roll").addPosition("-2", 0.27);
         mServos.get("intake-wrist-roll").addPosition("-1", 0.335);

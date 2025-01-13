@@ -26,7 +26,6 @@ public class OuttakeSlides {
 
     public enum Position {
         MIN,
-
         MAX,
         UNKNOWN,
         TRANSFER,
@@ -62,6 +61,7 @@ public class OuttakeSlides {
     Map<Position, Integer> mPositionsLeft = new LinkedHashMap<>();
     Map<Position, Integer> mPositionsRight = new LinkedHashMap<>();
 
+    public boolean isBusy() { return (mMotorRight.isBusy() || mMotorLeft.isBusy());}
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
@@ -133,7 +133,7 @@ public class OuttakeSlides {
     }
 
     public void extend(double Power)   {
-        if(mReady) {
+        if(mReady && !this.isBusy()) {
 
             mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -156,14 +156,14 @@ public class OuttakeSlides {
     }
 
     public void stop() {
-        if (mReady) {
+        if(mReady && !this.isBusy()) {
             mMotorLeft.setPower(0);
             mMotorRight.setPower(0);
         }
     }
 
     public void rollback(double Power) {
-        if(mReady) {
+        if(mReady && !this.isBusy()) {
 
             mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -194,20 +194,21 @@ public class OuttakeSlides {
 
     public void setPosition(Position position)
     {
-        if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
+        if(mReady && !mMotorRight.isBusy() && !mMotorLeft.isBusy()) {
+            if (mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
 
-           // mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
-            mMotorRight.setTargetPosition(mPositionsRight.get(position));
+                mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
+                mMotorRight.setTargetPosition(mPositionsRight.get(position));
 
-            mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-           // mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            while(mMotorRight.isBusy()){ //|| mMotorLeft.isBusy()) {
-                mMotorRight.setPower(0.1);
-                //mMotorLeft.setPower(0.1);
+                mMotorRight.setPower(0.35);
+                mMotorLeft.setPower(0.35);
+
+
+                mPosition = position;
             }
-
-            mPosition = position;
         }
     }
 

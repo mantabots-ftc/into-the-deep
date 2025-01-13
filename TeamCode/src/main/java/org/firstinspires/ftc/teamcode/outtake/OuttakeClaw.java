@@ -6,6 +6,7 @@ import java.util.Map;
 
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -34,20 +35,26 @@ public class OuttakeClaw {
             "microrelease", Position.MICRORELEASED,
             "closed",       Position.CLOSED
     );
+    private static int WAITING_TIME = 100;
 
     Telemetry             mLogger;
 
     boolean               mReady;
+    ElapsedTime           mTimer;
+
     Position              mPosition;
     ServoComponent        mServo;
     Map<Position, Double> mPositions = new LinkedHashMap<>();
 
     public Position getPosition() { return mPosition; }
 
+    public boolean isMoving() { return (mTimer.milliseconds() < WAITING_TIME);}
+
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
         mLogger = logger;
         mReady = true;
+        mTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
 
         String status = "";
 
@@ -83,9 +90,10 @@ public class OuttakeClaw {
 
     public void setPosition(Position position) {
 
-        if( mPositions.containsKey(position) && mReady) {
+        if( mPositions.containsKey(position) && mReady && !this.isMoving()) {
             mServo.setPosition(mPositions.get(position));
             mPosition = position;
+            mTimer.reset();
         }
 
     }

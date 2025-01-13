@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.intake;
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -36,7 +37,7 @@ public class IntakeSlides {
     Telemetry            mLogger;
 
     boolean              mReady;
-
+    ElapsedTime          mTimer;
 
     Position             mPosition;
 
@@ -45,6 +46,8 @@ public class IntakeSlides {
 
     Map<Position, Integer> mPositionsLeft = new LinkedHashMap<>();
     Map<Position, Integer> mPositionsRight = new LinkedHashMap<>();
+    
+    public boolean isBusy() { return (mMotorRight.isBusy() || mMotorLeft.isBusy());}
 
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
@@ -112,7 +115,7 @@ public class IntakeSlides {
     }
 
     public void extend(double Power)   {
-        if(mReady)
+        if(mReady && !this.isBusy())
         {
             mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -136,15 +139,14 @@ public class IntakeSlides {
     }
 
     public void stop() {
-        if (mReady) {
+        if(mReady && !this.isBusy()) {
             mMotorRight.setPower(0);
             mMotorLeft.setPower(0);
         }
     }
 
     public void rollback(double Power) {
-        if(mReady)
-        {
+        if(mReady && !this.isBusy()) {
             mMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mPosition = Position.UNKNOWN;
@@ -169,24 +171,21 @@ public class IntakeSlides {
     public void setPosition(Position position)
     {
         if(mPositionsLeft.containsKey(position) && mPositionsRight.containsKey(position)) {
-           // mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
+            mMotorLeft.setTargetPosition(mPositionsLeft.get(position));
             mMotorRight.setTargetPosition(mPositionsRight.get(position));
 
-            //mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
+            mMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
             mMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION   );
 
-            while(mMotorRight.isBusy()) {//|| mMotorLeft.isBusy()) {
-              //  mLogger.addLine("" + mMotorLeft.getCurrentPosition());
-                //mLogger.addLine("" + mMotorLeft.getTargetPosition());
+            while(mMotorRight.isBusy() || mMotorLeft.isBusy()) {
+                mLogger.addLine("" + mMotorLeft.getCurrentPosition());
+                mLogger.addLine("" + mMotorLeft.getTargetPosition());
                 mLogger.addLine("" + mMotorRight.getCurrentPosition());
                 mLogger.addLine("" + mMotorRight.getTargetPosition());
                 mLogger.update();
-                mMotorRight.setPower(0.5);
-                //mMotorLeft.setPower(0.1);
+                mMotorRight.setPower(0.35);
+                mMotorLeft.setPower(0.35);
             }
-
-
-
             mPosition = position;
         }
     }
